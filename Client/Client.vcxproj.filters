@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="_Input\_\Client.hxx" />
+    <ClInclude Include="_Input\_\Client\Audio.hxx">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Debug.hxx">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Interface.hxx">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Keyboard.hxx">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Mouse.hxx">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Space.hxx">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Time.hxx">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Video.hxx">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Audio\Sound.hxx">
+      <Filter>Client\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Audio\Track.hxx">
+      <Filter>Client\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Keyboard\Key.hxx">
+      <Filter>Client\Keyboard</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Mouse\Absolute.hxx">
+      <Filter>Client\Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Mouse\Button.hxx">
+      <Filter>Client\Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Mouse\Cursor.hxx">
+      <Filter>Client\Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Mouse\Pixel.hxx">
+      <Filter>Client\Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Mouse\Rectangle.hxx">
+      <Filter>Client\Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Mouse\Relative.hxx">
+      <Filter>Client\Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Mouse\Square.hxx">
+      <Filter>Client\Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Mouse\Wheel.hxx">
+      <Filter>Client\Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Video\Font.hxx">
+      <Filter>Client\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Video\Image.hxx">
+      <Filter>Client\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Space\Image.hxx">
+      <Filter>Client\Space</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Client\Network.hxx">
+      <Filter>Client</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="_Input\_\Client.cxx" />
+    <ClCompile Include="_Input\_\Client\Audio.cxx">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Debug.cxx">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Interface.cxx">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Keyboard.cxx">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Mouse.cxx">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Space.cxx">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Time.cxx">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Video.cxx">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Audio\Sound.cxx">
+      <Filter>Client\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Audio\Track.cxx">
+      <Filter>Client\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Keyboard\Key.cxx">
+      <Filter>Client\Keyboard</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Mouse\Absolute.cxx">
+      <Filter>Client\Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Mouse\Button.cxx">
+      <Filter>Client\Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Mouse\Cursor.cxx">
+      <Filter>Client\Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Mouse\Pixel.cxx">
+      <Filter>Client\Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Mouse\Rectangle.cxx">
+      <Filter>Client\Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Mouse\Relative.cxx">
+      <Filter>Client\Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Mouse\Square.cxx">
+      <Filter>Client\Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Mouse\Wheel.cxx">
+      <Filter>Client\Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Video\Font.cxx">
+      <Filter>Client\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Video\Image.cxx">
+      <Filter>Client\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Space\Image.cxx">
+      <Filter>Client\Space</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Client\Network.cxx">
+      <Filter>Client</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Client">
+      <UniqueIdentifier>{eb6a0017-5670-4b3c-b279-e256312b3432}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\Audio">
+      <UniqueIdentifier>{dba07004-3d17-423d-ab6e-62d11fbe19c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\Keyboard">
+      <UniqueIdentifier>{b7120813-8078-46a6-8b66-f16c7d594424}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\Mouse">
+      <UniqueIdentifier>{1a77593a-52c2-477e-94d7-5cdde148c25f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\Space">
+      <UniqueIdentifier>{4fd239f3-5e0d-4906-9b17-08e8443c4c47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\Video">
+      <UniqueIdentifier>{778f9d13-802e-4eaf-9d7b-15dae4b1fb45}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

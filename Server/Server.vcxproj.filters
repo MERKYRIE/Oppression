@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="_Input\_\Server.hxx" />
+    <ClInclude Include="_Input\_\Server\Debug.hxx">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Server\Space.hxx">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Server\Time.hxx">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Server\Space\Entity.hxx">
+      <Filter>Server\Space</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Server\Space\Terrain.hxx">
+      <Filter>Server\Space</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Server\Network.hxx">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Server\Network\Client.hxx">
+      <Filter>Server\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Server\Space\Order.hxx">
+      <Filter>Server\Space</Filter>
+    </ClInclude>
+    <ClInclude Include="_Input\_\Server\Space\Selection.hxx">
+      <Filter>Server\Space</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="_Input\_\Server.cxx" />
+    <ClCompile Include="_Input\_\Server\Debug.cxx">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Server\Space.cxx">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Server\Time.cxx">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Server\Space\Entity.cxx">
+      <Filter>Server\Space</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Server\Space\Terrain.cxx">
+      <Filter>Server\Space</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Server\Network.cxx">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Server\Network\Client.cxx">
+      <Filter>Server\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Server\Space\Order.cxx">
+      <Filter>Server\Space</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Server\Space\Selection.cxx">
+      <Filter>Server\Space</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Server">
+      <UniqueIdentifier>{eb6a0017-5670-4b3c-b279-e256312b3432}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\Space">
+      <UniqueIdentifier>{4fd239f3-5e0d-4906-9b17-08e8443c4c47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\Network">
+      <UniqueIdentifier>{caecd614-d4af-4c69-b257-6623b0600464}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
