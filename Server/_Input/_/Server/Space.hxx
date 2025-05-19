@@ -30,6 +30,7 @@ namespace NOppression::NServer
         void IReactTerrains(NNetwork::SClient & AClient);
         void IReactEntities(NNetwork::SClient & AClient);
         void IReactMovement(NNetwork::SClient & AClient);
+        void IReactEntity(NNetwork::SClient & AClient);
     }
     GSpace;
 }

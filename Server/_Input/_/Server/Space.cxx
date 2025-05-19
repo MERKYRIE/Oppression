@@ -31,11 +31,12 @@ namespace NOppression::NServer
                 &SSpace::IReactEntities
                 ,
                 &SSpace::IReactMovement
+                ,
+                &SSpace::IReactEntity
             }
         )
         {
-            FReactions[LCode] = std::bind(LAction , this , std::placeholders::_1);
-            LCode++;
+            FReactions[LCode++] = std::bind(LAction , this , std::placeholders::_1);
         }
         FDimensions.FX = 40;
         FDimensions.FY = 60;
@@ -67,7 +68,7 @@ namespace NOppression::NServer
             }
         }
         FEntities.resize(FDimensions.FX * FDimensions.FY);
-        FEntities[20 * FDimensions.FX + 20] = std::string{"/Builder/0+.png"};
+        //FEntities[20 * FDimensions.FX + 20] = std::string{"/Builder/0+.png"};
     }
 
     void SSpace::IUpdate()
@@ -164,9 +165,23 @@ namespace NOppression::NServer
         }
         LMovement;
         GNetwork.IReceive(&LMovement , sizeof(LMovement));
-        if(FEntities[LMovement.FSelectionY * FDimensions.FX + LMovement.FSelectionX].FCode != 8)
+        if(FEntities[LMovement.FSelectionY * FDimensions.FX + LMovement.FSelectionX].IName() != "/_.png")
         {
             FOrders.emplace_back(LMovement.FSelectionX , LMovement.FSelectionY , LMovement.FOrderX , LMovement.FOrderY , 1'000.0);
         }
+    }
+
+    void SSpace::IReactEntity(NNetwork::SClient & AClient)
+    {
+        GNetwork.IAddressOne(AClient);
+        struct SEntity
+        {
+            std::int64_t FX;
+            std::int64_t FY;
+            std::int64_t FCode;
+        }
+        LEntity;
+        GNetwork.IReceive(&LEntity , sizeof(LEntity));
+        FEntities[LEntity.FY * FDimensions.FX + LEntity.FX].FCode = LEntity.FCode; 
     }
 }

@@ -4,6 +4,7 @@ namespace NOppression::NClient::NVideo
 {
     struct SImage
     {
+        std::string FPath;
         SDL_Texture * FHandle;
 
         SImage(std::string const& APath);

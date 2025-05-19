@@ -16,6 +16,7 @@ namespace NOppression::NClient
         FDimensions;
         std::vector<std::int64_t> FTerrains;
         std::vector<std::int64_t> FEntities;
+        std::int64_t FMode;
         struct SSelection
         {
             std::int64_t FX;
@@ -33,6 +34,7 @@ namespace NOppression::NClient
         void ISignalizeTerrains();
         void ISignalizeEntities();
         void ISignalizeMovement();
+        void ISignalizeEntity(std::int64_t const& ACode);
         void IReact();
         void IReactDimensions();
         void IReactTerrains();

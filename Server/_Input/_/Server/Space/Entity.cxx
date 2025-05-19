@@ -11,4 +11,9 @@ namespace NOppression::NServer::NSpace
     {
         
     }
+
+    std::string SEntity::IName()
+    {
+        return(std::ranges::find_if(GSpace.FEntityAdaptors , [&](auto const& AEntity){return(FCode == AEntity.second);})->first);
+    }
 }

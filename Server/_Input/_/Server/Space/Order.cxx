@@ -42,7 +42,15 @@ namespace NOppression::NServer::NSpace
                 FFromY++;
             }
             std::swap(GSpace.FEntities[LLastY * GSpace.FDimensions.FX + LLastX] , GSpace.FEntities[FFromY * GSpace.FDimensions.FX + FFromX]);
-            GSpace.FEntities[FFromY * GSpace.FDimensions.FX + FFromX] = std::string{"/Builder/"} + LDeltaX + LDeltaY + ".png";
+            GSpace.FEntities[FFromY * GSpace.FDimensions.FX + FFromX]
+            =
+            GSpace.FEntities[FFromY * GSpace.FDimensions.FX + FFromX].IName().substr(0 , GSpace.FEntities[FFromY * GSpace.FDimensions.FX + FFromX].IName().find('/' , 1) + 1)
+            +
+            LDeltaX
+            +
+            LDeltaY
+            +
+            ".png";
             GSpace.ISignalizeMovement({FFromX , FFromY});
             if(FFromX != FToX || FFromY != FToY)
             {

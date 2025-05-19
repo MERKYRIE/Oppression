@@ -4,6 +4,7 @@ namespace NOppression::NClient
 {
     SAudio::SAudio()
     {
+        /*
         GDebug.IMask(Mix_Init(MIX_INIT_MP3));
         GDebug.ICode(Mix_OpenAudioDevice(MIX_DEFAULT_FREQUENCY , MIX_DEFAULT_FORMAT , MIX_DEFAULT_CHANNELS , 2048 , nullptr , 0));
         std::int32_t LFrequency;
@@ -28,6 +29,7 @@ namespace NOppression::NClient
             }
         }
         FTracks.shrink_to_fit();
+        */
     }
 
     NAudio::STrack& SAudio::ITrack(std::string const& APath)

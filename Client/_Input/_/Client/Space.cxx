@@ -15,6 +15,8 @@ namespace NOppression::NClient
                 "Entities"
                 ,
                 "Movement"
+                ,
+                "Entity"
             }
         )
         {
@@ -34,8 +36,7 @@ namespace NOppression::NClient
             }
         )
         {
-            FReactions[LCode] = std::bind(LAction , this);
-            LCode++;
+            FReactions[LCode++] = std::bind(LAction , this);
         }
         FX = 0;
         FY = 0;
@@ -45,6 +46,7 @@ namespace NOppression::NClient
         ISignalizeTerrains();
         FEntities.resize(FDimensions.FX * FDimensions.FY);
         ISignalizeEntities();
+        FMode = -1;
         FSelection.FX = -1;
         FSelection.FY = -1;
         FPartitionWidth = GVideo.FWidth / GVideo.FWidthProportional;
@@ -73,18 +75,105 @@ namespace NOppression::NClient
                 FImages[(LY - FY) * GVideo.FWidthProportional + (LX - FX)].IDraw(LX , LY);
             }
         }
+        switch(FMode)
+        {
+            case -1:
+                if(FSelection.FX != -1 && FSelection.FY != -1)
+                {
+                    SDL_Rect LTarget{static_cast<std::int32_t>((FSelection.FX - FX) * FPartitionWidth) , static_cast<std::int32_t>((FSelection.FY - FY) * FPartitionHeight) , static_cast<std::int32_t>(FPartitionWidth) , static_cast<std::int32_t>(FPartitionHeight)};
+                    SDL_SetRenderDrawColor(GVideo.FRenderer , 0 , 255 , 255 , 255);
+                    SDL_RenderDrawRect(GVideo.FRenderer , &LTarget);
+                    SDL_SetRenderDrawColor(GVideo.FRenderer , 0 , 0 , 0 , 255);
+                }
+            break;
+            case 1:
+                ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Base.png");}) - GVideo.FEntities.begin());
+                SDL_RenderCopy(GVideo.FRenderer , std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Base.png");})->get()->FHandle , nullptr , &GSpace.FImages[GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight * GVideo.FWidthProportional + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth].FTarget);
+            break;
+            case 2:
+                ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Builder/+0.png");}) - GVideo.FEntities.begin());
+            break;
+            case 3:
+                ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Miner.png");}) - GVideo.FEntities.begin());
+            break;
+            case 4:
+                ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Tank/+0.png");}) - GVideo.FEntities.begin());
+            break;
+        }
+        for
+        (
+            auto const& LKey : std::initializer_list<std::string>
+            {
+                "1"
+                ,
+                "2"
+                ,
+                "3"
+                ,
+                "4"
+                ,
+                "5"
+                ,
+                "6"
+                ,
+                "7"
+                ,
+                "8"
+                ,
+                "9"
+                ,
+                "0"
+            }
+        )
+        {
+            if(GKeyboard.FKeys[LKey]->FState == "Pressed" && FMode != std::stoll(LKey))
+            {
+                FMode = std::stoll(LKey);
+            }
+        }
         if(GMouse.FButtons["Left"]->FState == "Pressed")
         {
-            FSelection.FX = FX + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth;
-            FSelection.FY = FY + GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight;
+            switch(FMode)
+            {
+                case -1:
+                    if
+                    (
+                        FEntities[(FY + GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight) * FDimensions.FX + (FX + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth)]
+                        ==
+                        std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/_.png");}) - GVideo.FEntities.begin()
+                    )
+                    {
+                        FSelection.FX = -1;
+                        FSelection.FY = -1;
+                    }
+                    else
+                    {
+                        FSelection.FX = FX + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth;
+                        FSelection.FY = FY + GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight;
+                    }
+                break;
+                case 1:
+                    ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Base.png");}) - GVideo.FEntities.begin());
+                break;
+                case 2:
+                    ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Builder/+0.png");}) - GVideo.FEntities.begin());
+                break;
+                case 3:
+                    ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Miner.png");}) - GVideo.FEntities.begin());
+                break;
+                case 4:
+                    ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Tank/+0.png");}) - GVideo.FEntities.begin());
+                break;
+            }
+            FMode = -1;
         }
-        SDL_Rect LTarget{static_cast<std::int32_t>((FSelection.FX - FX) * FPartitionWidth) , static_cast<std::int32_t>((FSelection.FY - FY) * FPartitionHeight) , static_cast<std::int32_t>(FPartitionWidth) , static_cast<std::int32_t>(FPartitionHeight)};
-        SDL_SetRenderDrawColor(GVideo.FRenderer , 0 , 255 , 255 , 255);
-        SDL_RenderDrawRect(GVideo.FRenderer , &LTarget);
-        SDL_SetRenderDrawColor(GVideo.FRenderer , 0 , 0 , 0 , 255);
-        if(GMouse.FButtons["Right"]->FState == "Pressed" && FSelection.FX != -1 && FSelection.FY != -1)
+        if(GMouse.FButtons["Right"]->FState == "Pressed")
         {
-            ISignalizeMovement();
+            if(FMode == -1 && FSelection.FX != -1 && FSelection.FY != -1)
+            {
+                ISignalizeMovement();
+            }
+            FMode = -1;
         }
     }
 
@@ -127,6 +216,19 @@ namespace NOppression::NClient
         }
         LMovement{FSelection.FX , FSelection.FY , FX + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth , FY + GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight};
         GNetwork.ISend(&LMovement , sizeof(LMovement));
+    }
+
+    void SSpace::ISignalizeEntity(std::int64_t const& ACode)
+    {
+        ISignalize("Entity");
+        struct SEntity
+        {
+            std::int64_t FX;
+            std::int64_t FY;
+            std::int64_t FCode;
+        }
+        LEntity{FX + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth , FY + GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight , ACode};
+        GNetwork.ISend(&LEntity , sizeof(LEntity));
     }
 
     void SSpace::IReact()

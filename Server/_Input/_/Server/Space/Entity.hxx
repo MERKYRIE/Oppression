@@ -8,5 +8,6 @@ namespace NOppression::NServer::NSpace
         
         SEntity(std::string const& AName = "/_.png");
         void IUpdate();
+        std::string IName();
     };
 }

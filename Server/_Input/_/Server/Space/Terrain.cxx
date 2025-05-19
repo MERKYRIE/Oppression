@@ -11,4 +11,9 @@ namespace NOppression::NServer::NSpace
     {
         
     }
+
+    std::string STerrain::IName()
+    {
+        return(std::ranges::find_if(GSpace.FTerrainAdaptors , [&](auto const& ATerrain){return(FCode == ATerrain.second);})->first);
+    }
 }

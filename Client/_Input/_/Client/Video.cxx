@@ -4,7 +4,7 @@ namespace NOppression::NClient
 {
     SVideo::SVideo()
     {
-        GDebug.IHandle(FWindow = SDL_CreateWindow("Oppression" , 0 , 40 , 1280 , 720 , 0));
+        GDebug.IHandle(FWindow = SDL_CreateWindow("Oppression" , SDL_WINDOWPOS_CENTERED , SDL_WINDOWPOS_CENTERED , 1600 , 900 , 0));
         GDebug.IHandle(FRenderer = SDL_CreateRenderer(FWindow , -1 , SDL_RENDERER_ACCELERATED));
         SDL_DisplayMode LDisplayMode;
         GDebug.ICode(SDL_GetWindowDisplayMode(FWindow , &LDisplayMode));

@@ -4,6 +4,7 @@ namespace NOppression::NClient::NVideo
 {
     SImage::SImage(std::string const& APath)
     {
+        FPath = APath.substr(APath.find('/') + 1).substr(APath.substr(APath.find('/') + 1).find('/'));
         FHandle = IMG_LoadTexture(GVideo.FRenderer , APath.c_str());
         GDebug.IHandle(FHandle);
     }
