@@ -1,8 +1,8 @@
 #include"Server.hxx"
 
-namespace NOppression::NServer
+namespace NOppression::NServer::NTime
 {
-    void STime::IUpdate()
+    void IUpdate()
     {
         FLast = FAbsolute;
         FAbsolute = SDL_GetTicks();

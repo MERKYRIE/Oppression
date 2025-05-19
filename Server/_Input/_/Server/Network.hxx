@@ -1,23 +1,17 @@
 #pragma once
 
-namespace NOppression::NServer
+namespace NOppression::NServer::NNetwork
 {
-    inline struct SNetwork
-    {
-        TCPsocket FSocket;
-        std::vector<NNetwork::SClient> FClients;
-        std::vector<std::reference_wrapper<NNetwork::SClient>> FAddressees;
+    inline TCPsocket FSocket;
+    inline std::vector<std::int64_t> FClientArray;
+    inline std::int64_t FAddressee;
         
-        SNetwork();
-        TCPsocket IAccept();
-        void IAddressOne(NNetwork::SClient & AClient);
-        void IAddressRest(NNetwork::SClient const& AClient);
-        void IAddressAll();
-        void ISend(void const*const& AData , std::int64_t const& ASize);
-        void ISendIntegral(std::int64_t const& AValue);
-        void IReceive(void *const& AData , std::int64_t const& ASize);
-        void IReceiveIntegral(std::vector<std::int64_t> & AValue);
-        ~SNetwork();
-    }
-    GNetwork;
+    void IInitialize();
+    void IUpdate();
+    TCPsocket IAccept();
+    void ISend(void const*const& AData , std::int64_t const& ASize);
+    void ISendIntegral(std::int64_t const& AValue);
+    void IReceive(void *const& AData , std::int64_t const& ASize);
+    void IReceiveIntegral(std::int64_t & AValue);
+    void IDeinitialize();
 }

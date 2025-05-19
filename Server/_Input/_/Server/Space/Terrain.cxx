@@ -4,7 +4,7 @@ namespace NOppression::NServer::NSpace
 {
     STerrain::STerrain(std::string const& AName)
     {
-        FCode = GSpace.FTerrainAdaptors[AName];
+        FCode = FTerrainAdaptorArray[AName];
     }
     
     void STerrain::IUpdate()
@@ -14,6 +14,6 @@ namespace NOppression::NServer::NSpace
 
     std::string STerrain::IName()
     {
-        return(std::ranges::find_if(GSpace.FTerrainAdaptors , [&](auto const& ATerrain){return(FCode == ATerrain.second);})->first);
+        return(std::ranges::find_if(FTerrainAdaptorArray , [&](auto const& ATerrain){return(FCode == ATerrain.second);})->first);
     }
 }

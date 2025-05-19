@@ -1,14 +1,10 @@
 #pragma once
 
-namespace NOppression::NServer
+namespace NOppression::NServer::NTime
 {
-    inline struct STime
-    {
-        double FLast;
-        double FAbsolute;
-        double FRelative;
+    inline double FLast;
+    inline double FAbsolute;
+    inline double FRelative;
 
-        void IUpdate();
-    }
-    GTime;
+    void IUpdate();
 }

@@ -1,36 +1,28 @@
 #pragma once
 
-namespace NOppression::NServer
+namespace NOppression::NServer::NSpace
 {
-    inline struct SSpace
-    {
-        std::unordered_map<std::string , std::int64_t> FSignals;
-        std::unordered_map<std::int64_t , std::function<void(NNetwork::SClient &)>> FReactions;
-        struct SDimensions
-        {
-            std::int64_t FX;
-            std::int64_t FY;
-        }
-        FDimensions;
-        std::unordered_map<std::string , std::int64_t> FTerrainAdaptors;
-        std::vector<NSpace::STerrain> FTerrains;
-        std::unordered_map<std::string , std::int64_t> FEntityAdaptors;
-        std::vector<NSpace::SEntity> FEntities;
-        std::vector<NSpace::SOrder> FOrders;
+    inline std::unordered_map<std::string , std::int64_t> FSignalArray;
+    inline std::unordered_map<std::int64_t , std::function<void()>> FReactionArray;
+    inline std::int64_t FWidth;
+    inline std::int64_t FHeight;
+    inline std::unordered_map<std::string , std::int64_t> FTerrainAdaptorArray;
+    inline std::vector<NSpace::STerrain> FTerrainArray;
+    inline std::unordered_map<std::string , std::int64_t> FEntityAdaptorArray;
+    inline std::vector<NSpace::SEntity> FEntityArray;
+    inline std::vector<NSpace::SOrder> FOrderArray;
 
-        SSpace();
-        void IUpdate();
-        void ISignalize(std::string const& AName , void const*const& AData = nullptr , std::int64_t const& ASize = 0);
-        void ISignalizeDimensions();
-        void ISignalizeTerrains();
-        void ISignalizeEntities();
-        void ISignalizeMovement(NSpace::SSelection const& ASelection);
-        void IReact();
-        void IReactDimensions(NNetwork::SClient & AClient);
-        void IReactTerrains(NNetwork::SClient & AClient);
-        void IReactEntities(NNetwork::SClient & AClient);
-        void IReactMovement(NNetwork::SClient & AClient);
-        void IReactEntity(NNetwork::SClient & AClient);
-    }
-    GSpace;
+    void IInitialize();
+    void IUpdate();
+    void ISignalize(std::string const& AName , void const*const& AData = nullptr , std::int64_t const& ASize = 0);
+    void ISignalizeDimensions();
+    void ISignalizeTerrains();
+    void ISignalizeEntities();
+    void ISignalizeMovement(NSpace::SSelection const& ASelection);
+    void IReact();
+    void IReactDimensions();
+    void IReactTerrains();
+    void IReactEntities();
+    void IReactMovement();
+    void IReactEntity();
 }

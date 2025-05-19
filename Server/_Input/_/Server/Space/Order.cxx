@@ -14,7 +14,7 @@ namespace NOppression::NServer::NSpace
     
     void SOrder::IUpdate()
     {
-        FTimer += GTime.FRelative;
+        FTimer += NTime::FRelative;
         if(FTimer > FDuration)
         {
             std::int64_t LLastX{FFromX};
@@ -41,17 +41,17 @@ namespace NOppression::NServer::NSpace
                 LDeltaY = '+';
                 FFromY++;
             }
-            std::swap(GSpace.FEntities[LLastY * GSpace.FDimensions.FX + LLastX] , GSpace.FEntities[FFromY * GSpace.FDimensions.FX + FFromX]);
-            GSpace.FEntities[FFromY * GSpace.FDimensions.FX + FFromX]
+            std::swap(FEntityArray[LLastY * FWidth + LLastX] , FEntityArray[FFromY * FWidth + FFromX]);
+            FEntityArray[FFromY * FWidth + FFromX]
             =
-            GSpace.FEntities[FFromY * GSpace.FDimensions.FX + FFromX].IName().substr(0 , GSpace.FEntities[FFromY * GSpace.FDimensions.FX + FFromX].IName().find('/' , 1) + 1)
+            FEntityArray[FFromY * FWidth + FFromX].IName().substr(0 , FEntityArray[FFromY * FWidth + FFromX].IName().find('/' , 1) + 1)
             +
             LDeltaX
             +
             LDeltaY
             +
             ".png";
-            GSpace.ISignalizeMovement({FFromX , FFromY});
+            ISignalizeMovement({FFromX , FFromY});
             if(FFromX != FToX || FFromY != FToY)
             {
                 FTimer = 0.0;

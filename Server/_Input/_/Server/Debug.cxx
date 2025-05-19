@@ -1,8 +1,8 @@
 #include"Server.hxx"
 
-namespace NOppression::NServer
+namespace NOppression::NServer::NDebug
 {
-    void SDebug::IAssert(bool const& ACondition , std::string const& AMessage , std::source_location const& ALocation)
+    void IAssert(bool const& ACondition , std::string const& AMessage , std::source_location const& ALocation)
     {
         if(ACondition)
         {
@@ -27,18 +27,23 @@ namespace NOppression::NServer
         }
     }
 
-    void SDebug::ICode(std::int64_t const& AValue , std::source_location const& ALocation)
+    void ISimpleDirectMediaLayer(bool const& ACondition , std::source_location const& ALocation)
     {
-        IAssert(AValue < 0 , std::string{} + "Simple DirectMedia Layer - " + SDL_GetError() , ALocation);
+        IAssert(ACondition , std::string{} + "Simple DirectMedia Layer - " + SDL_GetError() , ALocation);
     }
 
-    void SDebug::IMask(std::int64_t const& AValue , std::source_location const& ALocation)
+    void ICode(std::int64_t const& AValue , std::source_location const& ALocation)
     {
-        IAssert(!AValue , std::string{} + "Simple DirectMedia Layer - " + SDL_GetError() , ALocation);
+        ISimpleDirectMediaLayer(AValue < 0 , ALocation);
     }
 
-    void SDebug::IHandle(void *const& APointer , std::source_location const& ALocation)
+    void IMask(std::int64_t const& AValue , std::source_location const& ALocation)
     {
-        IAssert(!APointer , std::string{} + "Simple DirectMedia Layer - " + SDL_GetError() , ALocation);
+        ISimpleDirectMediaLayer(!AValue , ALocation);
+    }
+
+    void IHandle(void const*const& AValue , std::source_location const& ALocation)
+    {
+        ISimpleDirectMediaLayer(!AValue , ALocation);
     }
 }

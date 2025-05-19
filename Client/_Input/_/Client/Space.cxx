@@ -80,24 +80,68 @@ namespace NOppression::NClient
             case -1:
                 if(FSelection.FX != -1 && FSelection.FY != -1)
                 {
-                    SDL_Rect LTarget{static_cast<std::int32_t>((FSelection.FX - FX) * FPartitionWidth) , static_cast<std::int32_t>((FSelection.FY - FY) * FPartitionHeight) , static_cast<std::int32_t>(FPartitionWidth) , static_cast<std::int32_t>(FPartitionHeight)};
+                    SDL_Rect LTarget
+                    {
+                        static_cast<std::int32_t>((FSelection.FX - FX) * FPartitionWidth)
+                        ,
+                        static_cast<std::int32_t>((FSelection.FY - FY) * FPartitionHeight)
+                        ,
+                        static_cast<std::int32_t>(FPartitionWidth)
+                        ,
+                        static_cast<std::int32_t>(FPartitionHeight)
+                    };
                     SDL_SetRenderDrawColor(GVideo.FRenderer , 0 , 255 , 255 , 255);
                     SDL_RenderDrawRect(GVideo.FRenderer , &LTarget);
                     SDL_SetRenderDrawColor(GVideo.FRenderer , 0 , 0 , 0 , 255);
                 }
             break;
             case 1:
-                ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Base.png");}) - GVideo.FEntities.begin());
-                SDL_RenderCopy(GVideo.FRenderer , std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Base.png");})->get()->FHandle , nullptr , &GSpace.FImages[GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight * GVideo.FWidthProportional + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth].FTarget);
+                SDL_RenderCopy
+                (
+                    GVideo.FRenderer
+                    ,
+                    std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Base/Construction.png");})->get()->FHandle
+                    ,
+                    nullptr
+                    ,
+                    &GSpace.FImages[GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight * GVideo.FWidthProportional + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth].FTarget
+                );
             break;
             case 2:
-                ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Builder/+0.png");}) - GVideo.FEntities.begin());
+                SDL_RenderCopy
+                (
+                    GVideo.FRenderer
+                    ,
+                    std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Builder/Construction.png");})->get()->FHandle
+                    ,
+                    nullptr
+                    ,
+                    &GSpace.FImages[GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight * GVideo.FWidthProportional + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth].FTarget
+                );
             break;
             case 3:
-                ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Miner.png");}) - GVideo.FEntities.begin());
+                SDL_RenderCopy
+                (
+                    GVideo.FRenderer
+                    ,
+                    std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Miner/Construction.png");})->get()->FHandle
+                    ,
+                    nullptr
+                    ,
+                    &GSpace.FImages[GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight * GVideo.FWidthProportional + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth].FTarget
+                );
             break;
             case 4:
-                ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Tank/+0.png");}) - GVideo.FEntities.begin());
+                SDL_RenderCopy
+                (
+                    GVideo.FRenderer
+                    ,
+                    std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Tank/Construction.png");})->get()->FHandle
+                    ,
+                    nullptr
+                    ,
+                    &GSpace.FImages[GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight * GVideo.FWidthProportional + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth].FTarget
+                );
             break;
         }
         for
@@ -153,13 +197,13 @@ namespace NOppression::NClient
                     }
                 break;
                 case 1:
-                    ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Base.png");}) - GVideo.FEntities.begin());
+                    ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Base/Building.png");}) - GVideo.FEntities.begin());
                 break;
                 case 2:
                     ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Builder/+0.png");}) - GVideo.FEntities.begin());
                 break;
                 case 3:
-                    ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Miner.png");}) - GVideo.FEntities.begin());
+                    ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Miner/Building.png");}) - GVideo.FEntities.begin());
                 break;
                 case 4:
                     ISignalizeEntity(std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/Tank/+0.png");}) - GVideo.FEntities.begin());

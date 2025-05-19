@@ -30,19 +30,18 @@
 
 namespace NOppression
 {
-    inline struct SServer
-    {
-        SServer();
-        void IInitiate();
-        ~SServer();
-    }
-    GServer;
-
     namespace NServer
     {
+        void IInitialize();
+        void IExecute();
+        void IDeinitialize();
+        
         namespace NNetwork
         {
-            struct SClient;
+            namespace NClient
+            {
+                struct SClient;
+            }
         }
         
         namespace NSpace
@@ -63,6 +62,6 @@ namespace NOppression
 #include"Server/Space/Terrain.hxx"
 
 #include"Server/Debug.hxx"
-#include"Server/Time.hxx"
 #include"Server/Network.hxx"
 #include"Server/Space.hxx"
+#include"Server/Time.hxx"

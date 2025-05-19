@@ -1,24 +1,42 @@
 #include"Server.hxx"
 
-namespace NOppression::NServer::NNetwork
+namespace NOppression::NServer::NNetwork::NClient
 {
-    SClient::SClient()
+    void IInitialize()
     {
-        GDebug.IHandle(FSet = SDLNet_AllocSocketSet(1));
+        GArray[0] = nullptr;
+        GConstruction = 0;
+        GBindingArray[0] = nullptr;
+        GDeconstruction = 0;
+    }
+    
+    void IConstruct()
+    {
+        GConstruction = std::ranges::max_element(GArray)->first + 1;
+        GArray[GConstruction] = new SClient;
+        NDebug::IHandle(GArray[GConstruction]->FSet = SDLNet_AllocSocketSet(1));
         std::cout << "Waiting for client to connect..." << "\n";
-        FSocket = nullptr;
-        while(!FSocket)
+        GArray[GConstruction]->FSocket = nullptr;
+        while(!GArray[GConstruction]->FSocket)
         {
-   	        FSocket = GNetwork.IAccept();
+   	        GArray[GConstruction]->FSocket = IAccept();
         }
         std::cout << "Client connected successfully!" << "\n";
-        GDebug.ICode(SDLNet_TCP_AddSocket(FSet , FSocket));
+        NDebug::ICode(SDLNet_TCP_AddSocket(GArray[GConstruction]->FSet , GArray[GConstruction]->FSocket));
     }
 
-    SClient::~SClient()
+    void IDeconstruct()
     {
-        GDebug.ICode(SDLNet_TCP_DelSocket(FSet , FSocket));
-        SDLNet_TCP_Close(FSocket);
-        SDLNet_FreeSocketSet(FSet);
+        NDebug::ICode(SDLNet_TCP_DelSocket(GArray[GDeconstruction]->FSet , GArray[GDeconstruction]->FSocket));
+        SDLNet_TCP_Close(GArray[GDeconstruction]->FSocket);
+        SDLNet_FreeSocketSet(GArray[GDeconstruction]->FSet);
+    }
+
+    void IDeinitialize()
+    {
+        GDeconstruction = 0;
+        GBindingArray[0] = nullptr;
+        GConstruction = 0;
+        GArray[0] = nullptr;
     }
 }

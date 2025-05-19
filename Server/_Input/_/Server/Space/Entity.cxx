@@ -4,7 +4,7 @@ namespace NOppression::NServer::NSpace
 {
     SEntity::SEntity(std::string const& AName)
     {
-        FCode = GSpace.FEntityAdaptors[AName];
+        FCode = FEntityAdaptorArray[AName];
     }
     
     void SEntity::IUpdate()
@@ -14,6 +14,6 @@ namespace NOppression::NServer::NSpace
 
     std::string SEntity::IName()
     {
-        return(std::ranges::find_if(GSpace.FEntityAdaptors , [&](auto const& AEntity){return(FCode == AEntity.second);})->first);
+        return(std::ranges::find_if(FEntityAdaptorArray , [&](auto const& AEntity){return(FCode == AEntity.second);})->first);
     }
 }

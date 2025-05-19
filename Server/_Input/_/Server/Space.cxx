@@ -1,8 +1,8 @@
 #include"Server.hxx"
 
-namespace NOppression::NServer
+namespace NOppression::NServer::NSpace
 {
-    SSpace::SSpace()
+    void IInitialize()
     {
         for
         (
@@ -18,45 +18,45 @@ namespace NOppression::NServer
             }
         )
         {
-            FSignals[LName] = LCode++;
+            FSignalArray[LName] = LCode++;
         }
         for
         (
-            std::int64_t LCode{0} ; auto const& LAction : std::initializer_list<std::function<void(SSpace *const& , NNetwork::SClient &)>>
+            std::int64_t LCode{0} ; auto const& LAction : std::initializer_list<std::function<void()>>
             {
-                &SSpace::IReactDimensions
+                &IReactDimensions
                 ,
-                &SSpace::IReactTerrains
+                &IReactTerrains
                 ,
-                &SSpace::IReactEntities
+                &IReactEntities
                 ,
-                &SSpace::IReactMovement
+                &IReactMovement
                 ,
-                &SSpace::IReactEntity
+                &IReactEntity
             }
         )
         {
-            FReactions[LCode++] = std::bind(LAction , this , std::placeholders::_1);
+            FReactionArray[LCode++] = std::bind(LAction);
         }
-        FDimensions.FX = 40;
-        FDimensions.FY = 60;
+        FWidth = 40;
+        FHeight = 60;
         for(std::int64_t LCode{0} ; auto const& LEntry : std::filesystem::recursive_directory_iterator{"Images/Terrains"})
         {
             if(LEntry.path().extension() == ".png")
             {
-                FTerrainAdaptors[LEntry.path().generic_string().substr(LEntry.path().generic_string().find('/' , LEntry.path().generic_string().find('/') + 1))] = LCode++;
+                FTerrainAdaptorArray[LEntry.path().generic_string().substr(LEntry.path().generic_string().find('/' , LEntry.path().generic_string().find('/') + 1))] = LCode++;
             }
         }
-        FTerrains.resize(FDimensions.FX * FDimensions.FY);
+        FTerrainArray.resize(FWidth * FHeight);
         {
             std::fstream LStream{"Terrains/Antifreeze.txt" , std::ios::in};
             std::string LString;
-            for(std::int64_t LY{0} ; LY < FDimensions.FY ; LY++)
+            for(std::int64_t LY{0} ; LY < FHeight ; LY++)
             {
-                for(std::int64_t LX{0} ; LX < FDimensions.FX ; LX++)
+                for(std::int64_t LX{0} ; LX < FWidth ; LX++)
                 {
                     LStream >> LString;
-                    FTerrains[LY * FDimensions.FX + LX] = LString;
+                    FTerrainArray[LY * FWidth + LX] = LString;
                 }
             }
         }
@@ -64,26 +64,26 @@ namespace NOppression::NServer
         {
             if(LEntry.path().extension() == ".png")
             {
-                FEntityAdaptors[LEntry.path().generic_string().substr(LEntry.path().generic_string().find('/' , LEntry.path().generic_string().find('/') + 1))] = LCode++;
+                FEntityAdaptorArray[LEntry.path().generic_string().substr(LEntry.path().generic_string().find('/' , LEntry.path().generic_string().find('/') + 1))] = LCode++;
             }
         }
-        FEntities.resize(FDimensions.FX * FDimensions.FY);
+        FEntityArray.resize(FWidth * FHeight);
         //FEntities[20 * FDimensions.FX + 20] = std::string{"/Builder/0+.png"};
     }
 
-    void SSpace::IUpdate()
+    void IUpdate()
     {
         IReact();
-        std::ranges::for_each(FOrders , [&](auto & AOrder){AOrder.IUpdate();});
+        std::ranges::for_each(FOrderArray , [&](auto & AOrder){AOrder.IUpdate();});
         bool LRemoved;
         do
         {
             LRemoved = false;
-            for(auto LOrder{FOrders.begin()} ; LOrder != FOrders.end() ; LOrder++)
+            for(auto LOrder{FOrderArray.begin()} ; LOrder != FOrderArray.end() ; LOrder++)
             {
                 if(LOrder->ICompleted())
                 {
-                    FOrders.erase(LOrder);
+                    FOrderArray.erase(LOrder);
                     LRemoved = true;
                     break;
                 }
@@ -92,70 +92,69 @@ namespace NOppression::NServer
         while(LRemoved);
     }
 
-    void SSpace::ISignalize(std::string const& AName , void const*const& AData , std::int64_t const& ASize)
+    void ISignalize(std::string const& AName , void const*const& AData , std::int64_t const& ASize)
     {
-        std::vector<std::uint8_t> LRequest;
-        LRequest.resize(sizeof(decltype(FSignals)::mapped_type) + ASize);
-        std::memcpy(&LRequest[0] , &FSignals[AName] , sizeof(decltype(FSignals)::mapped_type));
+        std::vector<std::uint8_t> LSignal;
+        LSignal.resize(sizeof(decltype(FSignalArray)::mapped_type) + ASize);
+        std::memcpy(&LSignal[0] , &FSignalArray[AName] , sizeof(decltype(FSignalArray)::mapped_type));
         if(AData && ASize)
         {
-            std::memcpy(&LRequest[sizeof(decltype(FSignals)::mapped_type)] , AData , ASize);
+            std::memcpy(&LSignal[sizeof(decltype(FSignalArray)::mapped_type)] , AData , ASize);
         }
-        GNetwork.ISend(LRequest.data() , std::ssize(LRequest));
+        NNetwork::ISend(LSignal.data() , std::ssize(LSignal));
     }
 
-    void SSpace::ISignalizeDimensions()
+    void ISignalizeDimensions()
     {
-        ISignalize("Dimensions" , &FDimensions , sizeof(FDimensions));
+        struct SDimensions
+        {
+            std::int64_t FX;
+            std::int64_t FY;
+        }
+        LDimensions{FWidth , FHeight};
+        ISignalize("Dimensions" , &LDimensions , sizeof(LDimensions));
     }
 
-    void SSpace::ISignalizeTerrains()
+    void ISignalizeTerrains()
     {
-        ISignalize("Terrains" , FTerrains.data() , FDimensions.FX * FDimensions.FY * sizeof(decltype(FTerrains)::value_type));
+        ISignalize("Terrains" , FTerrainArray.data() , FWidth * FHeight * sizeof(decltype(FTerrainArray)::value_type));
     }
 
-    void SSpace::ISignalizeEntities()
+    void ISignalizeEntities()
     {
-        ISignalize("Entities" , FEntities.data() , FDimensions.FX * FDimensions.FY * sizeof(decltype(FEntities)::value_type));
+        ISignalize("Entities" , FEntityArray.data() , FWidth * FHeight * sizeof(decltype(FEntityArray)::value_type));
     }
 
-    void SSpace::ISignalizeMovement(NSpace::SSelection const& ASelection)
+    void ISignalizeMovement(NSpace::SSelection const& ASelection)
     {
         ISignalize("Movement" , &ASelection , sizeof(ASelection));
     }
 
-    void SSpace::IReact()
+    void IReact()
     {
-        GNetwork.IAddressAll();
-        std::vector<std::int64_t> LRequests;
-        GNetwork.IReceiveIntegral(LRequests);
-        for(std::int64_t LRequest{0} ; LRequest < std::ssize(LRequests) ; LRequest++)
-        {
-            FReactions[LRequests[LRequest]](GNetwork.FClients[LRequest]);
-        }
+        std::int64_t LSignal;
+        NNetwork::IReceiveIntegral(LSignal);
+        FReactionArray[LSignal]();
+        NNetwork::FAddressee = NNetwork::FClientArray[(NNetwork::FAddressee + 1) % std::ssize(NNetwork::FClientArray)];
     }
 
-    void SSpace::IReactDimensions(NNetwork::SClient & AClient)
+    void IReactDimensions()
     {
-        GNetwork.IAddressOne(AClient);
         ISignalizeDimensions();
     }
 
-    void SSpace::IReactTerrains(NNetwork::SClient & AClient)
+    void IReactTerrains()
     {
-        GNetwork.IAddressOne(AClient);
         ISignalizeTerrains();
     }
 
-    void SSpace::IReactEntities(NNetwork::SClient & AClient)
+    void IReactEntities()
     {
-        GNetwork.IAddressOne(AClient);
         ISignalizeEntities();
     }
 
-    void SSpace::IReactMovement(NNetwork::SClient & AClient)
+    void IReactMovement()
     {
-        GNetwork.IAddressOne(AClient);
         struct SMovement
         {
             std::int64_t FSelectionX;
@@ -164,16 +163,15 @@ namespace NOppression::NServer
             std::int64_t FOrderY;
         }
         LMovement;
-        GNetwork.IReceive(&LMovement , sizeof(LMovement));
-        if(FEntities[LMovement.FSelectionY * FDimensions.FX + LMovement.FSelectionX].IName() != "/_.png")
+        NNetwork::IReceive(&LMovement , sizeof(LMovement));
+        if(FEntityArray[LMovement.FSelectionY * FWidth + LMovement.FSelectionX].IName() != "/_.png")
         {
-            FOrders.emplace_back(LMovement.FSelectionX , LMovement.FSelectionY , LMovement.FOrderX , LMovement.FOrderY , 1'000.0);
+            FOrderArray.emplace_back(LMovement.FSelectionX , LMovement.FSelectionY , LMovement.FOrderX , LMovement.FOrderY , 1'000.0);
         }
     }
 
-    void SSpace::IReactEntity(NNetwork::SClient & AClient)
+    void IReactEntity()
     {
-        GNetwork.IAddressOne(AClient);
         struct SEntity
         {
             std::int64_t FX;
@@ -181,7 +179,7 @@ namespace NOppression::NServer
             std::int64_t FCode;
         }
         LEntity;
-        GNetwork.IReceive(&LEntity , sizeof(LEntity));
-        FEntities[LEntity.FY * FDimensions.FX + LEntity.FX].FCode = LEntity.FCode; 
+        NNetwork::IReceive(&LEntity , sizeof(LEntity));
+        FEntityArray[LEntity.FY * FWidth + LEntity.FX].FCode = LEntity.FCode; 
     }
 }

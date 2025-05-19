@@ -4,30 +4,36 @@
 
 #include"Server.hxx"
 
-namespace NOppression
+namespace NOppression::NServer
 {
-    SServer::SServer()
+    void IInitialize()
     {
-        NServer::GDebug.ICode(SDL_Init(SDL_INIT_EVERYTHING));
+        NDebug::ICode(SDL_Init(SDL_INIT_EVERYTHING));
+        NNetwork::IInitialize();
+        NSpace::IInitialize();
     }
     
-    void SServer::IInitiate()
+    void IExecute()
     {
-        while(true)
+        IInitialize();
+        while(!NNetwork::FClientArray.empty())
         {
-            NServer::GTime.IUpdate();
-            NServer::GSpace.IUpdate();
+            NTime::IUpdate();
+            NNetwork::IUpdate();
+            NSpace::IUpdate();
         }
+        IDeinitialize();
     }
 
-    SServer::~SServer()
+    void IDeinitialize()
     {
+        NNetwork::IDeinitialize();
         SDL_Quit();
     }
 }
 
-std::int32_t main(std::int32_t , char**)
+std::int32_t main(std::int32_t , char **)
 {
-    NOppression::GServer.IInitiate();
+    NOppression::NServer::IExecute();
     return(0);
 }
