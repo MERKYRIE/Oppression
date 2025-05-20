@@ -1,66 +1,101 @@
 #include"Server.hxx"
 
-namespace NOppression::NServer::NSpace
+namespace NOppression::NServer::NSpace::NOrder
 {
-    SOrder::SOrder(std::int64_t const& AFromX , std::int64_t const& AFromY , std::int64_t const& AToX , std::int64_t const& AToY , double const& ADuration)
+    void IInitialize()
     {
-        FFromX = AFromX;
-        FFromY = AFromY;
-        FToX = AToX;
-        FToY = AToY;
-        FTimer = 0.0;
-        FDuration = ADuration;
+        GOrderArray[0] = nullptr;
+        GOrder = 0;
+        GFromX = 0;
+        GFromY = 0;
+        GToX = 0;
+        GToY = 0;
+        GDuration = 0.0;
+        GIsCompleted = false;
     }
     
-    void SOrder::IUpdate()
+    void IConstruct()
     {
-        FTimer += NTime::FRelative;
-        if(FTimer > FDuration)
+        for(std::int64_t LOrderArrayIndex{0} ; LOrderArrayIndex <= std::ssize(GOrderArray) ; LOrderArrayIndex++)
         {
-            std::int64_t LLastX{FFromX};
+            if(!GOrderArray.contains(LOrderArrayIndex))
+            {
+                GOrder = LOrderArrayIndex;
+                break;
+            }
+        }
+        GOrderArray[GOrder] = new SOrder;
+        GOrderArray[GOrder]->FFromX = GFromX;
+        GOrderArray[GOrder]->FFromY = GFromY;
+        GOrderArray[GOrder]->FToX = GToX;
+        GOrderArray[GOrder]->FToY = GToY;
+        GOrderArray[GOrder]->FTimer = 0.0;
+        GOrderArray[GOrder]->FDuration = GDuration;
+    }
+
+    void IUpdate()
+    {
+        GOrderArray[GOrder]->FTimer += NTime::FRelative;
+        if(GOrderArray[GOrder]->FTimer > GOrderArray[GOrder]->FDuration)
+        {
+            std::int64_t LLastX{GOrderArray[GOrder]->FFromX};
             char LDeltaX{'0'};
-            if(FToX - FFromX < 0)
+            if(GOrderArray[GOrder]->FToX - GOrderArray[GOrder]->FFromX < 0)
             {
                 LDeltaX = '-';
-                FFromX--;
+                GOrderArray[GOrder]->FFromX--;
             }
-            if(FToX - FFromX > 0)
+            if(GOrderArray[GOrder]->FToX - GOrderArray[GOrder]->FFromX > 0)
             {
                 LDeltaX = '+';
-                FFromX++;
+                GOrderArray[GOrder]->FFromX++;
             }
-            std::int64_t LLastY{FFromY};
+            std::int64_t LLastY{GOrderArray[GOrder]->FFromY};
             char LDeltaY{'0'};
-            if(FToY - FFromY < 0)
+            if(GOrderArray[GOrder]->FToY - GOrderArray[GOrder]->FFromY < 0)
             {
                 LDeltaY = '-';
-                FFromY--;
+                GOrderArray[GOrder]->FFromY--;
             }
-            if(FToY - FFromY > 0)
+            if(GOrderArray[GOrder]->FToY - GOrderArray[GOrder]->FFromY > 0)
             {
                 LDeltaY = '+';
-                FFromY++;
+                GOrderArray[GOrder]->FFromY++;
             }
-            std::swap(FEntityArray[LLastY * FWidth + LLastX] , FEntityArray[FFromY * FWidth + FFromX]);
-            FEntityArray[FFromY * FWidth + FFromX]
-            =
-            FEntityArray[FFromY * FWidth + FFromX].IName().substr(0 , FEntityArray[FFromY * FWidth + FFromX].IName().find('/' , 1) + 1)
-            +
-            LDeltaX
-            +
-            LDeltaY
-            +
-            ".png";
-            ISignalizeMovement({FFromX , FFromY});
-            if(FFromX != FToX || FFromY != FToY)
+            std::swap(FEntityArray[LLastY * FWidth + LLastX] , FEntityArray[GOrderArray[GOrder]->FFromY * FWidth + GOrderArray[GOrder]->FFromX]);
+            NEntity::GEntity = FEntityArray[GOrderArray[GOrder]->FFromY * FWidth + GOrderArray[GOrder]->FFromX];
+            NEntity::IName();
+            NEntity::GName = NEntity::GName.substr(0 , NEntity::GName.find('/' , 1) + 1) + LDeltaX + LDeltaY + ".png";
+            NEntity::IDeconstruct();
+            NEntity::IConstruct();
+            ISignalizeMovement({GOrderArray[GOrder]->FFromX , GOrderArray[GOrder]->FFromY});
+            if(GOrderArray[GOrder]->FFromX != GOrderArray[GOrder]->FToX || GOrderArray[GOrder]->FFromY != GOrderArray[GOrder]->FToY)
             {
-                FTimer = 0.0;
+                GOrderArray[GOrder]->FTimer = 0.0;
             }
         }
     }
 
-    bool SOrder::ICompleted()
+    void IIsCompleted()
     {
-        return(FTimer > FDuration);
+        GIsCompleted = GOrderArray[GOrder]->FTimer > GOrderArray[GOrder]->FDuration;
+    }
+
+    void IDeconstruct()
+    {
+        delete GOrderArray[GOrder];
+        GOrderArray.erase(GOrder);
+    }
+
+    void IDeinitialize()
+    {
+        GIsCompleted = false;
+        GDuration = 0.0;
+        GToY = 0;
+        GToX = 0;
+        GFromY = 0;
+        GFromX = 0;
+        GOrder = 0;
+        GOrderArray.clear();
     }
 }

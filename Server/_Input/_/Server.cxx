@@ -9,31 +9,38 @@ namespace NOppression::NServer
     void IInitialize()
     {
         NDebug::ICode(SDL_Init(SDL_INIT_EVERYTHING));
+        NTime::IInitialize();
         NNetwork::IInitialize();
         NSpace::IInitialize();
     }
     
-    void IExecute()
+    void IUpdate()
     {
-        IInitialize();
-        while(!NNetwork::FClientArray.empty())
+        while(true)
         {
             NTime::IUpdate();
             NNetwork::IUpdate();
+            if(NNetwork::FClientArray.empty())
+            {
+                break;
+            }
             NSpace::IUpdate();
         }
-        IDeinitialize();
     }
 
     void IDeinitialize()
     {
+        NSpace::IDeinitialize();
         NNetwork::IDeinitialize();
+        NTime::IDeinitialize();
         SDL_Quit();
     }
 }
 
 std::int32_t main(std::int32_t , char **)
 {
-    NOppression::NServer::IExecute();
+    NOppression::NServer::IInitialize();
+    NOppression::NServer::IUpdate();
+    NOppression::NServer::IDeinitialize();
     return(0);
 }

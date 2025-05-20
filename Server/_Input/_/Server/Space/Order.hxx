@@ -1,6 +1,6 @@
 #pragma once
 
-namespace NOppression::NServer::NSpace
+namespace NOppression::NServer::NSpace::NOrder
 {
     struct SOrder
     {
@@ -10,9 +10,21 @@ namespace NOppression::NServer::NSpace
         std::int64_t FToY;
         double FTimer;
         double FDuration;
-        
-        SOrder(std::int64_t const& AFromX , std::int64_t const& AFromY , std::int64_t const& AToX , std::int64_t const& AToY , double const& ADuration);
-        void IUpdate();
-        bool ICompleted();
     };
+
+    inline std::unordered_map<std::int64_t , SOrder *> GOrderArray;
+    inline std::int64_t GOrder;
+    inline std::int64_t GFromX;
+    inline std::int64_t GFromY;
+    inline std::int64_t GToX;
+    inline std::int64_t GToY;
+    inline double GDuration;
+    inline bool GIsCompleted;
+
+    void IInitialize();
+    void IConstruct();
+    void IUpdate();
+    void IIsCompleted();
+    void IDeconstruct();
+    void IDeinitialize();
 }

@@ -7,10 +7,10 @@ namespace NOppression::NServer::NSpace
     inline std::int64_t FWidth;
     inline std::int64_t FHeight;
     inline std::unordered_map<std::string , std::int64_t> FTerrainAdaptorArray;
-    inline std::vector<NSpace::STerrain> FTerrainArray;
+    inline std::vector<std::int64_t> FTerrainArray;
     inline std::unordered_map<std::string , std::int64_t> FEntityAdaptorArray;
-    inline std::vector<NSpace::SEntity> FEntityArray;
-    inline std::vector<NSpace::SOrder> FOrderArray;
+    inline std::vector<std::int64_t> FEntityArray;
+    inline std::vector<std::int64_t> FOrderArray;
 
     void IInitialize();
     void IUpdate();
@@ -25,4 +25,5 @@ namespace NOppression::NServer::NSpace
     void IReactEntities();
     void IReactMovement();
     void IReactEntity();
+    void IDeinitialize();
 }

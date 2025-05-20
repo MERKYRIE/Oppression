@@ -8,10 +8,8 @@ namespace NOppression::NServer::NNetwork::NClient
         TCPsocket FSocket;
     };
 
-    inline std::unordered_map<std::int64_t , SClient *> GArray;
-    inline std::int64_t GConstruction;
-    inline std::unordered_map<std::int64_t , SClient *> GBindingArray;
-    inline std::int64_t GDeconstruction;
+    inline std::unordered_map<std::int64_t , SClient *> GClientArray;
+    inline std::int64_t GClient;
 
     void IInitialize();
     void IConstruct();

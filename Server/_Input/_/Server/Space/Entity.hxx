@@ -1,13 +1,19 @@
 #pragma once
 
-namespace NOppression::NServer::NSpace
+namespace NOppression::NServer::NSpace::NEntity
 {
     struct SEntity
     {
         std::int64_t FCode;
-        
-        SEntity(std::string const& AName = "/_.png");
-        void IUpdate();
-        std::string IName();
     };
+
+    inline std::unordered_map<std::int64_t , SEntity *> GEntityArray;
+    inline std::int64_t GEntity;
+    inline std::string GName;
+        
+    void IInitialize();
+    void IConstruct();
+    void IName();
+    void IDeconstruct();
+    void IDeinitialize();
 }

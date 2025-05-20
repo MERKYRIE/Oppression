@@ -9,50 +9,59 @@ namespace NOppression::NServer::NNetwork
         NDebug::ICode(SDLNet_ResolveHost(&LAddress , nullptr , 27015));
         NDebug::IHandle(FSocket = SDLNet_TCP_Open(&LAddress));
         NClient::IInitialize();
-        NClient::IConstruct();
-        FClientArray.emplace_back(NClient::GConstruction);
+        FClientArray.resize(1);
+        for(auto & LClient : FClientArray)
+        {
+            NClient::IConstruct();
+            LClient = NClient::GClient;
+        }
         FAddressee = FClientArray[0];
     }
 
     void IUpdate()
     {
-        if(SDLNet_TCP_Recv(NClient::GArray[FAddressee]->FSocket , nullptr , 0) < 0)
+        if(SDLNet_TCP_Recv(NClient::GClientArray[FAddressee]->FSocket , nullptr , 0) < 0)
         {
-            NClient::GDeconstruction = FAddressee;
+            NClient::GClient = FAddressee;
             NClient::IDeconstruct();
+            FClientArray.erase(FClientArray.begin() + FAddressee - 1);
         }
     }
 
-    TCPsocket IAccept()
+    void IAccept()
     {
-        return(SDLNet_TCP_Accept(FSocket));
+        FAcceptance = SDLNet_TCP_Accept(FSocket);
     }
 
-    void ISend(void const*const& AData , std::int64_t const& ASize)
+    void ISend()
     {
-        NDebug::IAssert(SDLNet_TCP_Send(NClient::GArray[FAddressee]->FSocket , AData , static_cast<std::int32_t>(ASize)) != ASize);
+        NDebug::IAssert(SDLNet_TCP_Send(NClient::GClientArray[FAddressee]->FSocket , FData , static_cast<std::int32_t>(FSize)) != FSize);
     }
 
-    void ISendIntegral(std::int64_t const& AValue)
+    void ISendIntegral()
     {
-        ISend(&AValue , sizeof(AValue));
+        FData = FIntegral;
+        FSize = sizeof(*FIntegral);
+        ISend();
     }
 
-    void IReceive(void *const& AData , std::int64_t const& ASize)
+    void IReceive()
     {
-        NDebug::ISimpleDirectMediaLayer(SDLNet_TCP_Recv(NClient::GArray[FAddressee]->FSocket , AData , static_cast<std::int32_t>(ASize)) != ASize);
+        NDebug::IAssert(SDLNet_TCP_Recv(NClient::GClientArray[FAddressee]->FSocket , FData , static_cast<std::int32_t>(FSize)) != FSize);
     }
 
-    void IReceiveIntegral(std::int64_t & AValue)
+    void IReceiveIntegral()
     {
-        IReceive(&AValue , sizeof(AValue));
+        FData = FIntegral;
+        FSize = sizeof(*FIntegral);
+        IReceive();
     }
 
     void IDeinitialize()
     {
         for(auto const& LClient : FClientArray)
         {
-            NClient::GDeconstruction = LClient;
+            NClient::GClient = LClient;
             NClient::IDeconstruct();
         }
         FClientArray.clear();

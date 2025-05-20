@@ -33,7 +33,7 @@ namespace NOppression
     namespace NServer
     {
         void IInitialize();
-        void IExecute();
+        void IUpdate();
         void IDeinitialize();
         
         namespace NNetwork

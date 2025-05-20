@@ -4,39 +4,38 @@ namespace NOppression::NServer::NNetwork::NClient
 {
     void IInitialize()
     {
-        GArray[0] = nullptr;
-        GConstruction = 0;
-        GBindingArray[0] = nullptr;
-        GDeconstruction = 0;
+        GClientArray[0] = nullptr;
+        GClient = 0;
     }
     
     void IConstruct()
     {
-        GConstruction = std::ranges::max_element(GArray)->first + 1;
-        GArray[GConstruction] = new SClient;
-        NDebug::IHandle(GArray[GConstruction]->FSet = SDLNet_AllocSocketSet(1));
+        GClient = std::ranges::max_element(GClientArray)->first + 1;
+        GClientArray[GClient] = new SClient;
+        NDebug::IHandle(GClientArray[GClient]->FSet = SDLNet_AllocSocketSet(1));
         std::cout << "Waiting for client to connect..." << "\n";
-        GArray[GConstruction]->FSocket = nullptr;
-        while(!GArray[GConstruction]->FSocket)
+        GClientArray[GClient]->FSocket = nullptr;
+        while(!GClientArray[GClient]->FSocket)
         {
-   	        GArray[GConstruction]->FSocket = IAccept();
+            IAccept();
+   	        GClientArray[GClient]->FSocket = FAcceptance;
         }
         std::cout << "Client connected successfully!" << "\n";
-        NDebug::ICode(SDLNet_TCP_AddSocket(GArray[GConstruction]->FSet , GArray[GConstruction]->FSocket));
+        NDebug::ICode(SDLNet_TCP_AddSocket(GClientArray[GClient]->FSet , GClientArray[GClient]->FSocket));
     }
 
     void IDeconstruct()
     {
-        NDebug::ICode(SDLNet_TCP_DelSocket(GArray[GDeconstruction]->FSet , GArray[GDeconstruction]->FSocket));
-        SDLNet_TCP_Close(GArray[GDeconstruction]->FSocket);
-        SDLNet_FreeSocketSet(GArray[GDeconstruction]->FSet);
+        NDebug::ICode(SDLNet_TCP_DelSocket(GClientArray[GClient]->FSet , GClientArray[GClient]->FSocket));
+        SDLNet_TCP_Close(GClientArray[GClient]->FSocket);
+        SDLNet_FreeSocketSet(GClientArray[GClient]->FSet);
+        delete GClientArray[GClient];
+        GClientArray.erase(GClient);
     }
 
     void IDeinitialize()
     {
-        GDeconstruction = 0;
-        GBindingArray[0] = nullptr;
-        GConstruction = 0;
-        GArray[0] = nullptr;
+        GClient = 0;
+        GClientArray.clear();
     }
 }
