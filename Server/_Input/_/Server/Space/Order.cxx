@@ -35,7 +35,7 @@ namespace NOppression::NServer::NSpace::NOrder
 
     void IUpdate()
     {
-        GOrderArray[GOrder]->FTimer += NTime::FRelative;
+        GOrderArray[GOrder]->FTimer += NTime::GRelative;
         if(GOrderArray[GOrder]->FTimer > GOrderArray[GOrder]->FDuration)
         {
             std::int64_t LLastX{GOrderArray[GOrder]->FFromX};
@@ -62,13 +62,18 @@ namespace NOppression::NServer::NSpace::NOrder
                 LDeltaY = '+';
                 GOrderArray[GOrder]->FFromY++;
             }
-            std::swap(FEntityArray[LLastY * FWidth + LLastX] , FEntityArray[GOrderArray[GOrder]->FFromY * FWidth + GOrderArray[GOrder]->FFromX]);
-            NEntity::GEntity = FEntityArray[GOrderArray[GOrder]->FFromY * FWidth + GOrderArray[GOrder]->FFromX];
+            std::swap(GEntityCodeArray[LLastY * GWidth + LLastX] , GEntityCodeArray[GOrderArray[GOrder]->FFromY * GWidth + GOrderArray[GOrder]->FFromX]);
+            NEntity::GEntity = GEntityCodeArray[GOrderArray[GOrder]->FFromY * GWidth + GOrderArray[GOrder]->FFromX];
             NEntity::IName();
             NEntity::GName = NEntity::GName.substr(0 , NEntity::GName.find('/' , 1) + 1) + LDeltaX + LDeltaY + ".png";
             NEntity::IDeconstruct();
             NEntity::IConstruct();
-            ISignalizeMovement({GOrderArray[GOrder]->FFromX , GOrderArray[GOrder]->FFromY});
+            NSelection::GX = GOrderArray[GOrder]->FFromX;
+            NSelection::GY = GOrderArray[GOrder]->FFromY;
+            NSelection::IConstruct();
+            GSelection = NSelection::GSelection;
+            ISignalizeSelection();
+            NSelection::IDeconstruct();
             if(GOrderArray[GOrder]->FFromX != GOrderArray[GOrder]->FToX || GOrderArray[GOrder]->FFromY != GOrderArray[GOrder]->FToY)
             {
                 GOrderArray[GOrder]->FTimer = 0.0;

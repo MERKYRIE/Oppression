@@ -9,7 +9,7 @@ namespace NOppression::NClient::NSpace
 
     void SImage::IDraw(std::int64_t const& AX , std::int64_t const& AY)
     {
-        SDL_RenderCopy(GVideo.FRenderer , GVideo.ITerrain(GSpace.FTerrains[AY * GSpace.FDimensions.FX + AX])->FHandle , nullptr , &FTarget);
-        SDL_RenderCopy(GVideo.FRenderer , GVideo.IEntity(GSpace.FEntities[AY * GSpace.FDimensions.FX + AX])->FHandle , nullptr , &FTarget);
+        SDL_RenderCopy(GVideo.FRenderer , GVideo.ITerrain(GSpace.FTerrainArray[AY * GSpace.FWidth + AX])->FHandle , nullptr , &FTarget);
+        SDL_RenderCopy(GVideo.FRenderer , GVideo.IEntity(GSpace.FEntityArray[AY * GSpace.FWidth + AX])->FHandle , nullptr , &FTarget);
     }
 }

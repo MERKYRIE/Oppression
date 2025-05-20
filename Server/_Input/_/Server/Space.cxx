@@ -6,203 +6,208 @@ namespace NOppression::NServer::NSpace
     {
         for
         (
-            std::int64_t LCode{0} ; auto const& LName : std::initializer_list<std::string>
+            GCode = 0 ; auto const& LName : std::initializer_list<std::string>
             {
-                "Dimensions"
+                "Dimensionality"
                 ,
-                "Terrains"
+                "TerrainArray"
                 ,
-                "Entities"
+                "EntityArray"
                 ,
-                "Movement"
+                "Selection"
             }
         )
         {
-            FSignalArray[LName] = LCode++;
+            GSignalNameToCodeArray[LName] = GCode++;
         }
         for
         (
-            std::int64_t LCode{0} ; auto const& LAction : std::initializer_list<std::function<void()>>
+            GCode = 0 ; auto const& LAction : std::initializer_list<std::function<void()>>
             {
-                &IReactDimensions
+                &IReactDimensionality
                 ,
-                &IReactTerrains
+                &IReactTerrainArray
                 ,
-                &IReactEntities
+                &IReactEntitieArray
                 ,
-                &IReactMovement
+                &IReactOrder
                 ,
                 &IReactEntity
             }
         )
         {
-            FReactionArray[LCode++] = std::bind(LAction);
+            GReactionCodeToActionArray[GCode++] = std::bind(LAction);
         }
-        FWidth = 40;
-        FHeight = 60;
-        for(std::int64_t LCode{0} ; auto const& LEntry : std::filesystem::recursive_directory_iterator{"Images/Terrains"})
+        GWidth = 40;
+        GHeight = 60;
+        for(GCode = 0 ; auto const& LEntry : std::filesystem::recursive_directory_iterator{"Images/Terrains"})
         {
             if(LEntry.path().extension() == ".png")
             {
-                FTerrainAdaptorArray[LEntry.path().generic_string().substr(LEntry.path().generic_string().find('/' , LEntry.path().generic_string().find('/') + 1))] = LCode++;
+                GTerrainNameToCodeArray[LEntry.path().generic_string().substr(LEntry.path().generic_string().find('/' , LEntry.path().generic_string().find('/') + 1))] = GCode++;
             }
         }
         NTerrain::IInitialize();
-        FTerrainArray.resize(FWidth * FHeight);
+        GTerrainCodeArray.resize(GWidth * GHeight);
         {
-            std::fstream LStream{"Terrains/Antifreeze.txt" , std::ios::in};
-            for(auto & LTerrain : FTerrainArray)
+            GFile.open("Terrains/Antifreeze.txt" , std::ios::in);
+            for(auto & LTerrain : GTerrainCodeArray)
             {
-                LStream >> NTerrain::GName;
+                GFile >> NTerrain::GName;
                 NTerrain::IConstruct();
                 LTerrain = NTerrain::GTerrain;
             }
         }
-        for(std::int64_t LCode{0} ; auto const& LEntry : std::filesystem::recursive_directory_iterator{"Images/Entities"})
+        GTerrainArray.resize(GWidth * GHeight);
+        for(GCode = 0 ; auto const& LEntry : std::filesystem::recursive_directory_iterator{"Images/Entities"})
         {
             if(LEntry.path().extension() == ".png")
             {
-                FEntityAdaptorArray[LEntry.path().generic_string().substr(LEntry.path().generic_string().find('/' , LEntry.path().generic_string().find('/') + 1))] = LCode++;
+                GEntityNameToCodeArray[LEntry.path().generic_string().substr(LEntry.path().generic_string().find('/' , LEntry.path().generic_string().find('/') + 1))] = GCode++;
             }
         }
         NEntity::IInitialize();
-        FEntityArray.resize(FWidth * FHeight);
+        GEntityCodeArray.resize(GWidth * GHeight);
+        GEntityArray.resize(GWidth * GHeight);
         NEntity::GName = "/_.png";
-        for(auto & LEntity : FEntityArray)
+        for(auto & LEntity : GEntityCodeArray)
         {
             NEntity::IConstruct();
             LEntity = NEntity::GEntity;
         }
+        NDimensionality::IInitialize();
+        NSelection::IInitialize();
+        NOrder::IInitialize();
     }
 
     void IUpdate()
     {
         IReact();
-        for(auto const& LOrder : FOrderArray)
+        for(auto const& LOrder : GOrderCodeArray)
         {
             NOrder::GOrder = LOrder;
             NOrder::IUpdate();
         }
-        bool LRemoved;
         do
         {
-            LRemoved = false;
-            for(auto LOrder{FOrderArray.begin()} ; LOrder != FOrderArray.end() ; LOrder++)
+            GIsRemoved = false;
+            for(auto LOrder{GOrderCodeArray.begin()} ; LOrder != GOrderCodeArray.end() ; LOrder++)
             {
                 NOrder::GOrder = *LOrder;
                 NOrder::IIsCompleted();
                 if(NOrder::GIsCompleted)
                 {
-                    FOrderArray.erase(LOrder);
-                    LRemoved = true;
+                    GOrderCodeArray.erase(LOrder);
+                    GIsRemoved = true;
                     break;
                 }
             }
         }
-        while(LRemoved);
+        while(GIsRemoved);
     }
 
-    void ISignalize(std::string const& AName , void const*const& AData , std::int64_t const& ASize)
+    void ISignalize()
     {
-        std::vector<std::uint8_t> LSignal;
-        LSignal.resize(sizeof(decltype(FSignalArray)::mapped_type) + ASize);
-        std::memcpy(&LSignal[0] , &FSignalArray[AName] , sizeof(decltype(FSignalArray)::mapped_type));
-        if(AData && ASize)
+        GByteArray.resize(sizeof(decltype(GSignalNameToCodeArray)::mapped_type) + GSize);
+        std::memcpy(&GByteArray[0] , &GSignalNameToCodeArray[GName] , sizeof(decltype(GSignalNameToCodeArray)::mapped_type));
+        if(GData && GSize)
         {
-            std::memcpy(&LSignal[sizeof(decltype(FSignalArray)::mapped_type)] , AData , ASize);
+            std::memcpy(&GByteArray[sizeof(decltype(GSignalNameToCodeArray)::mapped_type)] , GData , GSize);
         }
-        NNetwork::FData = LSignal.data();
-        NNetwork::FSize = std::ssize(LSignal);
+        NNetwork::GData = GByteArray.data();
+        NNetwork::GSize = std::ssize(GByteArray);
         NNetwork::ISend();
     }
 
-    void ISignalizeDimensions()
+    void ISignalizeDimensionality()
     {
-        struct SDimensions
-        {
-            std::int64_t FX;
-            std::int64_t FY;
-        }
-        LDimensions{FWidth , FHeight};
-        ISignalize("Dimensions" , &LDimensions , sizeof(LDimensions));
+        NDimensionality::GX = GWidth;
+        NDimensionality::GY = GHeight;
+        NDimensionality::IConstruct();
+        GName = "Dimensionality";
+        GData = NDimensionality::GDimensionalityArray[NDimensionality::GDimensionality];
+        GSize = sizeof(std::remove_pointer_t<decltype(NDimensionality::GDimensionalityArray)::mapped_type>);
+        ISignalize();
+        NDimensionality::IDeconstruct();
     }
 
-    void ISignalizeTerrains()
+    void ISignalizeTerrainArray()
     {
-        std::vector<NTerrain::STerrain> LTerrainArray;
-        LTerrainArray.resize(FWidth * FHeight);
-        for(std::int64_t LTerrainArrayIndex{0} ; auto & LTerrain : LTerrainArray)
+        for(std::int64_t LTerrainArrayIndex{0} ; auto & LTerrain : GTerrainArray)
         {
-            LTerrain = *NTerrain::GTerrainArray[FTerrainArray[LTerrainArrayIndex++]];
-
+            LTerrain = *NTerrain::GTerrainArray[GTerrainCodeArray[LTerrainArrayIndex++]];
         }
-        ISignalize("Terrains" , LTerrainArray.data() , FWidth * FHeight * sizeof(decltype(LTerrainArray)::value_type));
+        GName = "TerrainArray";
+        GData = GTerrainArray.data();
+        GSize = GWidth * GHeight * sizeof(decltype(GTerrainArray)::value_type);
+        ISignalize();
     }
 
-    void ISignalizeEntities()
+    void ISignalizeEntityArray()
     {
-        std::vector<NEntity::SEntity> LEntityArray;
-        LEntityArray.resize(FWidth * FHeight);
-        for(std::int64_t LEntityArrayIndex{0} ; auto & LEntity : LEntityArray)
+        for(std::int64_t LEntityArrayIndex{0} ; auto & LEntity : GEntityArray)
         {
-            LEntity = *NEntity::GEntityArray[FEntityArray[LEntityArrayIndex++]];
+            LEntity = *NEntity::GEntityArray[GEntityCodeArray[LEntityArrayIndex++]];
         }
-        ISignalize("Entities" , LEntityArray.data() , FWidth * FHeight * sizeof(decltype(LEntityArray)::value_type));
+        GName = "EntityArray";
+        GData = GEntityArray.data();
+        GSize = GWidth * GHeight * sizeof(decltype(GEntityArray)::value_type);
+        ISignalize();
     }
 
-    void ISignalizeMovement(NSpace::SSelection const& ASelection)
+    void ISignalizeSelection()
     {
-        ISignalize("Movement" , &ASelection , sizeof(ASelection));
+        GName = "Selection";
+        GData = NSelection::GSelectionArray[GSelection];
+        GSize = sizeof(std::remove_pointer_t<decltype(NSelection::GSelectionArray)::mapped_type>);
+        ISignalize();
     }
 
     void IReact()
     {
-        std::int64_t LSignal;
-        NNetwork::FIntegral = &LSignal;
         NNetwork::IReceiveIntegral();
-        FReactionArray[LSignal]();
-        NNetwork::FAddressee = NNetwork::FClientArray[(NNetwork::FAddressee + 1) % std::ssize(NNetwork::FClientArray)];
+        GReactionCodeToActionArray[NNetwork::GIntegral]();
     }
 
-    void IReactDimensions()
+    void IReactDimensionality()
     {
-        ISignalizeDimensions();
+        ISignalizeDimensionality();
     }
 
-    void IReactTerrains()
+    void IReactTerrainArray()
     {
-        ISignalizeTerrains();
+        ISignalizeTerrainArray();
     }
 
-    void IReactEntities()
+    void IReactEntitieArray()
     {
-        ISignalizeEntities();
+        ISignalizeEntityArray();
     }
 
-    void IReactMovement()
+    void IReactOrder()
     {
-        struct SMovement
+        struct SOrder
         {
-            std::int64_t FSelectionX;
-            std::int64_t FSelectionY;
-            std::int64_t FOrderX;
-            std::int64_t FOrderY;
+            std::int64_t FFromX;
+            std::int64_t FFromY;
+            std::int64_t FToX;
+            std::int64_t FToY;
         }
-        LMovement;
-        NNetwork::FData = &LMovement;
-        NNetwork::FSize = sizeof(LMovement);
+        LOrder;
+        NNetwork::GData = &LOrder;
+        NNetwork::GSize = sizeof(LOrder);
         NNetwork::IReceive();
-        NEntity::GEntity = FEntityArray[LMovement.FSelectionY * FWidth + LMovement.FSelectionX];
+        NEntity::GEntity = GEntityCodeArray[LOrder.FFromY * GWidth + LOrder.FFromX];
         NEntity::IName();
         if(NEntity::GName != "/_.png")
         {
-            NOrder::GFromX = LMovement.FSelectionX;
-            NOrder::GFromY = LMovement.FSelectionY;
-            NOrder::GToX = LMovement.FOrderX;
-            NOrder::GToY = LMovement.FOrderY;
+            NOrder::GFromX = LOrder.FFromX;
+            NOrder::GFromY = LOrder.FFromY;
+            NOrder::GToX = LOrder.FToX;
+            NOrder::GToY = LOrder.FToY;
             NOrder::GDuration = 1'000.0;
             NOrder::IConstruct();
-            FOrderArray.emplace_back(NOrder::GOrder);
+            GOrderCodeArray.emplace_back(NOrder::GOrder);
         }
     }
 
@@ -215,27 +220,36 @@ namespace NOppression::NServer::NSpace
             std::int64_t FCode;
         }
         LEntity;
-        NNetwork::FData = &LEntity;
-        NNetwork::FSize = sizeof(LEntity);
+        NNetwork::GData = &LEntity;
+        NNetwork::GSize = sizeof(LEntity);
         NNetwork::IReceive();
-        NEntity::GEntityArray[FEntityArray[LEntity.FY * FWidth + LEntity.FX]]->FCode = LEntity.FCode; 
+        NEntity::GEntityArray[GEntityCodeArray[LEntity.FY * GWidth + LEntity.FX]]->FCode = LEntity.FCode; 
     }
 
     void IDeinitialize()
     {
-        for(auto const& LTerrain : FTerrainArray)
+        for(auto const& LOrder : GOrderCodeArray)
         {
-            NTerrain::GTerrain = LTerrain;
-            NTerrain::IDeconstruct();
+            NOrder::GOrder = LOrder;
+            NOrder::IDeconstruct();
         }
-        FTerrainArray.clear();
-        NTerrain::IDeinitialize();
-        for(auto const& LEntity : FEntityArray)
+        GOrderCodeArray.clear();
+        NOrder::IDeinitialize();
+        NSelection::IDeinitialize();
+        NDimensionality::IDeinitialize();
+        for(auto const& LEntity : GEntityCodeArray)
         {
             NEntity::GEntity = LEntity;
             NEntity::IDeconstruct();
         }
-        FEntityArray.clear();
+        GEntityCodeArray.clear();
         NEntity::IDeinitialize();
+        for(auto const& LTerrain : GTerrainCodeArray)
+        {
+            NTerrain::GTerrain = LTerrain;
+            NTerrain::IDeconstruct();
+        }
+        GTerrainCodeArray.clear();
+        NTerrain::IDeinitialize();
     }
 }

@@ -29,6 +29,9 @@
     <ClInclude Include="_Input\_\Server\Space\Selection.hxx">
       <Filter>Server\Space</Filter>
     </ClInclude>
+    <ClInclude Include="_Input\_\Server\Space\Dimensionality.hxx">
+      <Filter>Server\Space</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="_Input\_\Server.cxx" />
@@ -57,6 +60,9 @@
       <Filter>Server\Space</Filter>
     </ClCompile>
     <ClCompile Include="_Input\_\Server\Space\Selection.cxx">
+      <Filter>Server\Space</Filter>
+    </ClCompile>
+    <ClCompile Include="_Input\_\Server\Space\Dimensionality.cxx">
       <Filter>Server\Space</Filter>
     </ClCompile>
   </ItemGroup>

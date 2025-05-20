@@ -2,7 +2,14 @@
 #pragma comment(lib , "../SimpleDirectMediaLayer/SDL2")
 #pragma comment(lib , "../SimpleDirectMediaLayer/Network/SDL2_net")
 
+#define Oppression
 #include"Server.hxx"
+#include"Server/Space/Entity.hxx"
+#include"Server/Space/Terrain.hxx"
+#include"Server/Debug.hxx"
+#include"Server/Network.hxx"
+#include"Server/Space.hxx"
+#include"Server/Time.hxx"
 
 namespace NOppression::NServer
 {
@@ -20,7 +27,7 @@ namespace NOppression::NServer
         {
             NTime::IUpdate();
             NNetwork::IUpdate();
-            if(NNetwork::FClientArray.empty())
+            if(NNetwork::GClientArray.empty())
             {
                 break;
             }

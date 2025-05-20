@@ -8,13 +8,13 @@ namespace NOppression::NClient
         (
             std::int64_t LCode{0} ; auto const& LName : std::initializer_list<std::string>
             {
-                "Dimensions"
+                "Dimensionality"
                 ,
-                "Terrains"
+                "TerrainArray"
                 ,
-                "Entities"
+                "EntityArray"
                 ,
-                "Movement"
+                "Order"
                 ,
                 "Entity"
             }
@@ -26,13 +26,13 @@ namespace NOppression::NClient
         (
             std::int64_t LCode{0} ; auto const& LAction : std::initializer_list<std::function<void(SSpace *const&)>>
             {
-                &SSpace::IReactDimensions
+                &SSpace::IReactDimensionality
                 ,
-                &SSpace::IReactTerrains
+                &SSpace::IReactTerrainArray
                 ,
-                &SSpace::IReactEntities
+                &SSpace::IReactEntityArray
                 ,
-                &SSpace::IReactMovement
+                &SSpace::IReactSelection
             }
         )
         {
@@ -40,15 +40,15 @@ namespace NOppression::NClient
         }
         FX = 0;
         FY = 0;
-        ISignalizeDimensions();
+        ISignalizeDimensionality();
         IReact();
-        FTerrains.resize(FDimensions.FX * FDimensions.FY);
-        ISignalizeTerrains();
-        FEntities.resize(FDimensions.FX * FDimensions.FY);
-        ISignalizeEntities();
+        FTerrainArray.resize(FWidth * FHeight);
+        ISignalizeTerrainArray();
+        FEntityArray.resize(FWidth * FHeight);
+        ISignalizeEntityArray();
         FMode = -1;
-        FSelection.FX = -1;
-        FSelection.FY = -1;
+        FSelectionX = -1;
+        FSelectionY = -1;
         FPartitionWidth = GVideo.FWidth / GVideo.FWidthProportional;
         FPartitionHeight = GVideo.FHeight / GVideo.FHeightProportional;
         for(std::int64_t LY{0} ; LY < GVideo.FHeightProportional ; LY++)
@@ -66,8 +66,8 @@ namespace NOppression::NClient
         {
             IReact();
         }
-        FX = std::clamp<std::int64_t>(FX + (-static_cast<std::int64_t>(GKeyboard.FKeys["A"]->FState == "Pressed") + static_cast<std::int64_t>(GKeyboard.FKeys["D"]->FState == "Pressed")) , 0 , FDimensions.FX - GVideo.FWidthProportional);
-        FY = std::clamp<std::int64_t>(FY + (-static_cast<std::int64_t>(GKeyboard.FKeys["W"]->FState == "Pressed") + static_cast<std::int64_t>(GKeyboard.FKeys["S"]->FState == "Pressed")) , 0 , FDimensions.FY - GVideo.FHeightProportional);
+        FX = std::clamp<std::int64_t>(FX + (-static_cast<std::int64_t>(GKeyboard.FKeys["A"]->FState == "Pressed") + static_cast<std::int64_t>(GKeyboard.FKeys["D"]->FState == "Pressed")) , 0 , FWidth - GVideo.FWidthProportional);
+        FY = std::clamp<std::int64_t>(FY + (-static_cast<std::int64_t>(GKeyboard.FKeys["W"]->FState == "Pressed") + static_cast<std::int64_t>(GKeyboard.FKeys["S"]->FState == "Pressed")) , 0 , FHeight - GVideo.FHeightProportional);
         for(std::int64_t LY{FY} ; LY < FY + GVideo.FHeightProportional ; LY++)
         {
             for(std::int64_t LX{FX} ; LX < FX + GVideo.FWidthProportional ; LX++)
@@ -78,13 +78,13 @@ namespace NOppression::NClient
         switch(FMode)
         {
             case -1:
-                if(FSelection.FX != -1 && FSelection.FY != -1)
+                if(FSelectionX != -1 && FSelectionY != -1)
                 {
                     SDL_Rect LTarget
                     {
-                        static_cast<std::int32_t>((FSelection.FX - FX) * FPartitionWidth)
+                        static_cast<std::int32_t>((FSelectionX - FX) * FPartitionWidth)
                         ,
-                        static_cast<std::int32_t>((FSelection.FY - FY) * FPartitionHeight)
+                        static_cast<std::int32_t>((FSelectionY - FY) * FPartitionHeight)
                         ,
                         static_cast<std::int32_t>(FPartitionWidth)
                         ,
@@ -173,6 +173,8 @@ namespace NOppression::NClient
             if(GKeyboard.FKeys[LKey]->FState == "Pressed" && FMode != std::stoll(LKey))
             {
                 FMode = std::stoll(LKey);
+                FSelectionX = -1;
+                FSelectionY = -1;
             }
         }
         if(GMouse.FButtons["Left"]->FState == "Pressed")
@@ -182,18 +184,18 @@ namespace NOppression::NClient
                 case -1:
                     if
                     (
-                        FEntities[(FY + GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight) * FDimensions.FX + (FX + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth)]
+                        FEntityArray[(FY + GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight) * FWidth + (FX + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth)]
                         ==
                         std::ranges::find_if(GVideo.FEntities , [&](auto const& AEntity){return(AEntity->FPath == "/_.png");}) - GVideo.FEntities.begin()
                     )
                     {
-                        FSelection.FX = -1;
-                        FSelection.FY = -1;
+                        FSelectionX = -1;
+                        FSelectionY = -1;
                     }
                     else
                     {
-                        FSelection.FX = FX + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth;
-                        FSelection.FY = FY + GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight;
+                        FSelectionX = FX + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth;
+                        FSelectionY = FY + GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight;
                     }
                 break;
                 case 1:
@@ -213,9 +215,9 @@ namespace NOppression::NClient
         }
         if(GMouse.FButtons["Right"]->FState == "Pressed")
         {
-            if(FMode == -1 && FSelection.FX != -1 && FSelection.FY != -1)
+            if(FMode == -1 && FSelectionX != -1 && FSelectionY != -1)
             {
-                ISignalizeMovement();
+                ISignalizeOrder();
             }
             FMode = -1;
         }
@@ -233,33 +235,33 @@ namespace NOppression::NClient
         GNetwork.ISend(LRequest.data() , std::ssize(LRequest));
     }
 
-    void SSpace::ISignalizeDimensions()
+    void SSpace::ISignalizeDimensionality()
     {
-        ISignalize("Dimensions");
+        ISignalize("Dimensionality");
     }
 
-    void SSpace::ISignalizeTerrains()
+    void SSpace::ISignalizeTerrainArray()
     {
-        ISignalize("Terrains");
+        ISignalize("TerrainArray");
     }
 
-    void SSpace::ISignalizeEntities()
+    void SSpace::ISignalizeEntityArray()
     {
-        ISignalize("Entities");
+        ISignalize("EntityArray");
     }
 
-    void SSpace::ISignalizeMovement()
+    void SSpace::ISignalizeOrder()
     {
-        ISignalize("Movement");
-        struct SMovement
+        ISignalize("Order");
+        struct SOrder
         {
-            std::int64_t FSelectionX;
-            std::int64_t FSelectionY;
-            std::int64_t FOrderX;
-            std::int64_t FOrderY;
+            std::int64_t FFromX;
+            std::int64_t FFromY;
+            std::int64_t FToX;
+            std::int64_t FToY;
         }
-        LMovement{FSelection.FX , FSelection.FY , FX + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth , FY + GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight};
-        GNetwork.ISend(&LMovement , sizeof(LMovement));
+        LOrder{FSelectionX , FSelectionY , FX + GMouse.FCursor->FAbsolute->FPixel->FX / FPartitionWidth , FY + GMouse.FCursor->FAbsolute->FPixel->FY / FPartitionHeight};
+        GNetwork.ISend(&LOrder , sizeof(LOrder));
     }
 
     void SSpace::ISignalizeEntity(std::int64_t const& ACode)
@@ -282,25 +284,41 @@ namespace NOppression::NClient
         FReactions[LRequest]();
     }
 
-    void SSpace::IReactDimensions()
+    void SSpace::IReactDimensionality()
     {
-        GNetwork.IReceive(&FDimensions , sizeof(FDimensions));
+        struct SDimensionality
+        {
+            std::int64_t FX;
+            std::int64_t FY;
+        }
+        LDimensionality;
+        GNetwork.IReceive(&LDimensionality , sizeof(LDimensionality));
+        FWidth = LDimensionality.FX;
+        FHeight = LDimensionality.FY;
     }
 
-    void SSpace::IReactTerrains()
+    void SSpace::IReactTerrainArray()
     {
-        GNetwork.IReceive(FTerrains.data() , FDimensions.FX * FDimensions.FY * sizeof(decltype(FTerrains)::value_type));
-        ISignalizeTerrains();
+        GNetwork.IReceive(FTerrainArray.data() , FWidth * FHeight * sizeof(decltype(FTerrainArray)::value_type));
+        ISignalizeTerrainArray();
     }
 
-    void SSpace::IReactEntities()
+    void SSpace::IReactEntityArray()
     {
-        GNetwork.IReceive(FEntities.data() , FDimensions.FX * FDimensions.FY * sizeof(decltype(FEntities)::value_type));
-        ISignalizeEntities();
+        GNetwork.IReceive(FEntityArray.data() , FWidth * FHeight * sizeof(decltype(FEntityArray)::value_type));
+        ISignalizeEntityArray();
     }
 
-    void SSpace::IReactMovement()
+    void SSpace::IReactSelection()
     {
-        GNetwork.IReceive(&FSelection , sizeof(FSelection));
+        struct SSelection
+        {
+            std::int64_t FX;
+            std::int64_t FY;
+        }
+        LSelection;
+        GNetwork.IReceive(&LSelection , sizeof(LSelection));
+        FSelectionX = LSelection.FX;
+        FSelectionY = LSelection.FY;
     }
 }

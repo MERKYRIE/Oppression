@@ -5,68 +5,78 @@ namespace NOppression::NServer::NNetwork
     void IInitialize()
     {
         NDebug::ICode(SDLNet_Init());
-        IPaddress LAddress;
-        NDebug::ICode(SDLNet_ResolveHost(&LAddress , nullptr , 27015));
-        NDebug::IHandle(FSocket = SDLNet_TCP_Open(&LAddress));
+        NDebug::ICode(SDLNet_ResolveHost(&GAddress , nullptr , 27015));
+        NDebug::IHandle(GSocket = SDLNet_TCP_Open(&GAddress));
         NClient::IInitialize();
-        FClientArray.resize(1);
-        for(auto & LClient : FClientArray)
+        GClientArray.resize(1);
+        for(auto & LClient : GClientArray)
         {
             NClient::IConstruct();
             LClient = NClient::GClient;
         }
-        FAddressee = FClientArray[0];
+        GAddressee = -1;
+        GAcceptance = nullptr;
+        GData = nullptr;
+        GSize = 0;
+        GIntegral = 0;
     }
 
     void IUpdate()
     {
-        if(SDLNet_TCP_Recv(NClient::GClientArray[FAddressee]->FSocket , nullptr , 0) < 0)
+        GAddressee = (GAddressee + 1) % std::ssize(GClientArray);
+        if(SDLNet_TCP_Recv(NClient::GClientArray[GClientArray[GAddressee]]->FSocket , nullptr , 0) < 0)
         {
-            NClient::GClient = FAddressee;
+            NClient::GClient = GClientArray[GAddressee];
             NClient::IDeconstruct();
-            FClientArray.erase(FClientArray.begin() + FAddressee - 1);
+            GClientArray.erase(GClientArray.begin() + GAddressee);
         }
     }
 
     void IAccept()
     {
-        FAcceptance = SDLNet_TCP_Accept(FSocket);
+        GAcceptance = SDLNet_TCP_Accept(GSocket);
     }
 
     void ISend()
     {
-        NDebug::IAssert(SDLNet_TCP_Send(NClient::GClientArray[FAddressee]->FSocket , FData , static_cast<std::int32_t>(FSize)) != FSize);
+        NDebug::IAssert(SDLNet_TCP_Send(NClient::GClientArray[GClientArray[GAddressee]]->FSocket , GData , static_cast<std::int32_t>(GSize)) != GSize);
     }
 
     void ISendIntegral()
     {
-        FData = FIntegral;
-        FSize = sizeof(*FIntegral);
+        GData = &GIntegral;
+        GSize = sizeof(GIntegral);
         ISend();
     }
 
     void IReceive()
     {
-        NDebug::IAssert(SDLNet_TCP_Recv(NClient::GClientArray[FAddressee]->FSocket , FData , static_cast<std::int32_t>(FSize)) != FSize);
+        NDebug::IAssert(SDLNet_TCP_Recv(NClient::GClientArray[GClientArray[GAddressee]]->FSocket , GData , static_cast<std::int32_t>(GSize)) != GSize);
     }
 
     void IReceiveIntegral()
     {
-        FData = FIntegral;
-        FSize = sizeof(*FIntegral);
+        GData = &GIntegral;
+        GSize = sizeof(GIntegral);
         IReceive();
     }
 
     void IDeinitialize()
     {
-        for(auto const& LClient : FClientArray)
+        GIntegral = 0;
+        GSize = 0;
+        GData = nullptr;
+        GAcceptance = nullptr;
+        GAddressee = -1;
+        for(auto const& LClient : GClientArray)
         {
             NClient::GClient = LClient;
             NClient::IDeconstruct();
         }
-        FClientArray.clear();
+        GClientArray.clear();
         NClient::IDeinitialize();
-        SDLNet_TCP_Close(FSocket);
+        SDLNet_TCP_Close(GSocket);
+        GSocket = nullptr;
         SDLNet_Quit();
     }
 }

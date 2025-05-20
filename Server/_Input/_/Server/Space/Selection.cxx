@@ -1,10 +1,41 @@
 #include"Server.hxx"
 
-namespace NOppression::NServer::NSpace
+namespace NOppression::NServer::NSpace::NSelection
 {
-    SSelection::SSelection(std::int64_t const& AX , std::int64_t const& AY)
+    void IInitialize()
     {
-        FX = AX;
-        FY = AY;
+        GSelectionArray[0] = nullptr;
+        GSelection = 0;
+        GX = 0;
+        GY = 0;
+    }
+    
+    void IConstruct()
+    {
+        for(std::int64_t LSelectionArrayIndex{0} ; LSelectionArrayIndex <= std::ssize(GSelectionArray) ; LSelectionArrayIndex++)
+        {
+            if(!GSelectionArray.contains(LSelectionArrayIndex))
+            {
+                GSelection = LSelectionArrayIndex;
+                break;
+            }
+        }
+        GSelectionArray[GSelection] = new SSelection;
+        GSelectionArray[GSelection]->FX = GX;
+        GSelectionArray[GSelection]->FY = GY;
+    }
+
+    void IDeconstruct()
+    {
+        delete GSelectionArray[GSelection];
+        GSelectionArray.erase(GSelection);
+    }
+
+    void IDeinitialize()
+    {
+        GY = 0;
+        GX = 0;
+        GSelection = 0;
+        GSelectionArray.clear();
     }
 }

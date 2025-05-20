@@ -24,6 +24,7 @@
     <ClInclude Include="_Input\_\Server\Network.hxx" />
     <ClInclude Include="_Input\_\Server\Network\Client.hxx" />
     <ClInclude Include="_Input\_\Server\Space.hxx" />
+    <ClInclude Include="_Input\_\Server\Space\Dimensionality.hxx" />
     <ClInclude Include="_Input\_\Server\Space\Entity.hxx" />
     <ClInclude Include="_Input\_\Server\Space\Order.hxx" />
     <ClInclude Include="_Input\_\Server\Space\Selection.hxx" />
@@ -36,6 +37,7 @@
     <ClCompile Include="_Input\_\Server\Network.cxx" />
     <ClCompile Include="_Input\_\Server\Network\Client.cxx" />
     <ClCompile Include="_Input\_\Server\Space.cxx" />
+    <ClCompile Include="_Input\_\Server\Space\Dimensionality.cxx" />
     <ClCompile Include="_Input\_\Server\Space\Entity.cxx" />
     <ClCompile Include="_Input\_\Server\Space\Order.cxx" />
     <ClCompile Include="_Input\_\Server\Space\Selection.cxx" />

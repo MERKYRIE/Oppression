@@ -20,12 +20,12 @@ namespace NOppression::NServer::NSpace::NEntity
             }
         }
         GEntityArray[GEntity] = new SEntity;
-        GEntityArray[GEntity]->FCode = FEntityAdaptorArray[GName];
+        GEntityArray[GEntity]->FCode = GEntityNameToCodeArray[GName];
     }
 
     void IName()
     {
-        GName = std::ranges::find_if(FEntityAdaptorArray , [&](auto const& AEntity){return(GEntityArray[GEntity]->FCode == AEntity.second);})->first;
+        GName = std::ranges::find_if(GEntityNameToCodeArray , [&](auto const& AEntity){return(GEntityArray[GEntity]->FCode == AEntity.second);})->first;
     }
 
     void IDeconstruct()

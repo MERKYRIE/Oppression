@@ -4,22 +4,22 @@ namespace NOppression::NServer::NTime
 {
     void IInitialize()
     {
-        FLast = 0.0;
-        FAbsolute = 0.0;
-        FRelative = 0.0;
+        GLast = 0.0;
+        GAbsolute = 0.0;
+        GRelative = 0.0;
     }
     
     void IUpdate()
     {
-        FLast = FAbsolute;
-        FAbsolute = SDL_GetTicks();
-        FRelative = FAbsolute - FLast;
+        GLast = GAbsolute;
+        GAbsolute = SDL_GetTicks();
+        GRelative = GAbsolute - GLast;
     }
 
     void IDeinitialize()
     {
-        FRelative = 0.0;
-        FAbsolute = 0.0;
-        FLast = 0.0;
+        GRelative = 0.0;
+        GAbsolute = 0.0;
+        GLast = 0.0;
     }
 }

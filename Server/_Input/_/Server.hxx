@@ -36,6 +36,11 @@ namespace NOppression
         void IUpdate();
         void IDeinitialize();
         
+        namespace NDebug
+        {
+        
+        }
+        
         namespace NNetwork
         {
             namespace NClient
@@ -46,16 +51,43 @@ namespace NOppression
         
         namespace NSpace
         {
-            struct SEntity;
-            struct SOrder;
-            struct SSelection;
-            struct STerrain;
+            namespace NDimensionality
+            {
+                struct SDimensionality;
+            }
+
+            namespace NEntity
+            {
+                struct SEntity;
+            }
+
+            namespace NOrder
+            {
+                struct SOrder;
+            }
+
+            namespace NSelection
+            {
+                struct SSelection;
+            }
+
+            namespace NTerrain
+            {
+                struct STerrain;
+            }
+        }
+
+        namespace NTime
+        {
+        
         }
     }
 }
 
+#ifndef Oppression
 #include"Server/Network/Client.hxx"
 
+#include"Server/Space/Dimensionality.hxx"
 #include"Server/Space/Entity.hxx"
 #include"Server/Space/Order.hxx"
 #include"Server/Space/Selection.hxx"
@@ -65,3 +97,4 @@ namespace NOppression
 #include"Server/Network.hxx"
 #include"Server/Space.hxx"
 #include"Server/Time.hxx"
+#endif

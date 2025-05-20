@@ -18,7 +18,7 @@ namespace NOppression::NServer::NNetwork::NClient
         while(!GClientArray[GClient]->FSocket)
         {
             IAccept();
-   	        GClientArray[GClient]->FSocket = FAcceptance;
+   	        GClientArray[GClient]->FSocket = GAcceptance;
         }
         std::cout << "Client connected successfully!" << "\n";
         NDebug::ICode(SDLNet_TCP_AddSocket(GClientArray[GClient]->FSet , GClientArray[GClient]->FSocket));

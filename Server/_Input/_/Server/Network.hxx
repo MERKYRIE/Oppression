@@ -2,13 +2,14 @@
 
 namespace NOppression::NServer::NNetwork
 {
-    inline TCPsocket FSocket;
-    inline std::vector<std::int64_t> FClientArray;
-    inline std::int64_t FAddressee;
-    inline TCPsocket FAcceptance;
-    inline void * FData;
-    inline std::int64_t FSize;
-    inline std::int64_t * FIntegral;
+    inline IPaddress GAddress;
+    inline TCPsocket GSocket;
+    inline std::vector<std::int64_t> GClientArray;
+    inline std::int64_t GAddressee;
+    inline TCPsocket GAcceptance;
+    inline void * GData;
+    inline std::int64_t GSize;
+    inline std::int64_t GIntegral;
         
     void IInitialize();
     void IUpdate();

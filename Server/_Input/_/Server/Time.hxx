@@ -2,9 +2,9 @@
 
 namespace NOppression::NServer::NTime
 {
-    inline double FLast;
-    inline double FAbsolute;
-    inline double FRelative;
+    inline double GLast;
+    inline double GAbsolute;
+    inline double GRelative;
 
     void IInitialize();
     void IUpdate();
