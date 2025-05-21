@@ -1,4 +1,9 @@
 #include"Server.hxx"
+#include"Network.hxx"
+
+#include"Debug.hxx"
+
+#include"Network/Client.hxx"
 
 namespace NOppression::NServer::NNetwork
 {

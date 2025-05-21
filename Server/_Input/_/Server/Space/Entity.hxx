@@ -5,6 +5,7 @@ namespace NOppression::NServer::NSpace::NEntity
     struct SEntity
     {
         std::int64_t FCode;
+        SSS * FFF;
     };
 
     inline std::unordered_map<std::int64_t , SEntity *> GEntityArray;

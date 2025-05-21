@@ -51,6 +51,9 @@ namespace NOppression
         
         namespace NSpace
         {
+            struct SSpace;
+            struct SSS;
+            
             namespace NDimensionality
             {
                 struct SDimensionality;
@@ -83,18 +86,3 @@ namespace NOppression
         }
     }
 }
-
-#ifndef Oppression
-#include"Server/Network/Client.hxx"
-
-#include"Server/Space/Dimensionality.hxx"
-#include"Server/Space/Entity.hxx"
-#include"Server/Space/Order.hxx"
-#include"Server/Space/Selection.hxx"
-#include"Server/Space/Terrain.hxx"
-
-#include"Server/Debug.hxx"
-#include"Server/Network.hxx"
-#include"Server/Space.hxx"
-#include"Server/Time.hxx"
-#endif

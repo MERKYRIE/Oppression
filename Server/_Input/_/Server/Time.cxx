@@ -1,4 +1,5 @@
 #include"Server.hxx"
+#include"Time.hxx"
 
 namespace NOppression::NServer::NTime
 {

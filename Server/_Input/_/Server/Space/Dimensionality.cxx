@@ -1,4 +1,5 @@
 #include"Server.hxx"
+#include"Dimensionality.hxx"
 
 namespace NOppression::NServer::NSpace::NDimensionality
 {

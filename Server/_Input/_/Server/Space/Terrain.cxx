@@ -1,4 +1,7 @@
 #include"Server.hxx"
+#include"Terrain.hxx"
+
+#include"../Space.hxx"
 
 namespace NOppression::NServer::NSpace::NTerrain
 {
@@ -13,12 +16,12 @@ namespace NOppression::NServer::NSpace::NTerrain
     {
         GTerrain = std::ranges::max_element(GTerrainArray)->first + 1;
         GTerrainArray[GTerrain] = new STerrain;
-        GTerrainArray[GTerrain]->FCode = GTerrainNameToCodeArray[GName];
+        GTerrainArray[GTerrain]->FCode = GSpace.GTerrainNameToCodeArray[GName];
     }
 
     void IName()
     {
-        GName = std::ranges::find_if(GTerrainNameToCodeArray , [&](auto const& ATerrain){return(GTerrainArray[GTerrain]->FCode == ATerrain.second);})->first;
+        GName = std::ranges::find_if(GSpace.GTerrainNameToCodeArray , [&](auto const& ATerrain){return(GTerrainArray[GTerrain]->FCode == ATerrain.second);})->first;
     }
 
     void IDeconstruct()

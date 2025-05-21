@@ -1,4 +1,5 @@
 #include"Server.hxx"
+#include"Selection.hxx"
 
 namespace NOppression::NServer::NSpace::NSelection
 {

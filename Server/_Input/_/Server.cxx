@@ -2,14 +2,41 @@
 #pragma comment(lib , "../SimpleDirectMediaLayer/SDL2")
 #pragma comment(lib , "../SimpleDirectMediaLayer/Network/SDL2_net")
 
-#define Oppression
 #include"Server.hxx"
-#include"Server/Space/Entity.hxx"
-#include"Server/Space/Terrain.hxx"
+
 #include"Server/Debug.hxx"
 #include"Server/Network.hxx"
 #include"Server/Space.hxx"
 #include"Server/Time.hxx"
+
+/*
+    Server > Debug
+           > Network
+           > Space
+           > Time
+
+    Network > Debug
+            > Client
+
+    Space > Network
+          > Dimensionality
+          > Entity
+          > Order
+          > Selection
+          > Terrain
+
+    Client > Debug
+           > Network
+
+    Entity > Space
+
+    Order > Space
+          > Time
+          > Entity
+          > Selection
+
+    Terrain > Space
+*/
 
 namespace NOppression::NServer
 {
@@ -18,7 +45,7 @@ namespace NOppression::NServer
         NDebug::ICode(SDL_Init(SDL_INIT_EVERYTHING));
         NTime::IInitialize();
         NNetwork::IInitialize();
-        NSpace::IInitialize();
+        NSpace::GSpace.IInitialize();
     }
     
     void IUpdate()
@@ -31,13 +58,13 @@ namespace NOppression::NServer
             {
                 break;
             }
-            NSpace::IUpdate();
+            NSpace::GSpace.IUpdate();
         }
     }
 
     void IDeinitialize()
     {
-        NSpace::IDeinitialize();
+        NSpace::GSpace.IDeinitialize();
         NNetwork::IDeinitialize();
         NTime::IDeinitialize();
         SDL_Quit();

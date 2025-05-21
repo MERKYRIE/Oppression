@@ -1,4 +1,5 @@
 #include"Server.hxx"
+#include"Debug.hxx"
 
 namespace NOppression::NServer::NDebug
 {
