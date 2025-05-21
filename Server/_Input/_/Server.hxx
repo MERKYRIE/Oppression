@@ -52,7 +52,6 @@ namespace NOppression
         namespace NSpace
         {
             struct SSpace;
-            struct SSS;
             
             namespace NDimensionality
             {

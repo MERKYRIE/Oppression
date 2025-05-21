@@ -17,23 +17,23 @@ namespace NOppression::NServer::NSpace
     {
         for
         (
-            GSpace.GCode = 0 ; auto const& LName : std::initializer_list<std::string>
+            FCode = 0 ; auto const& LSignalType : std::initializer_list<std::reference_wrapper<std::int64_t>>
             {
-                "Dimensionality"
+                FSignalType.FDimensionality
                 ,
-                "TerrainArray"
+                FSignalType.FTerrainArray
                 ,
-                "EntityArray"
+                FSignalType.FEntityArray
                 ,
-                "Selection"
+                FSignalType.FSelection
             }
         )
         {
-            GSpace.GSignalNameToCodeArray[LName] = GSpace.GCode++;
+            LSignalType.get() = FCode++;
         }
         for
         (
-            GSpace.GCode = 0 ; auto const& LAction : std::initializer_list<std::function<void(SSpace *const&)>>
+            FCode = 0 ; auto const& LAction : std::initializer_list<std::function<void(SSpace *const&)>>
             {
                 &SSpace::IReactDimensionality
                 ,
@@ -47,41 +47,40 @@ namespace NOppression::NServer::NSpace
             }
         )
         {
-            GSpace.GReactionCodeToActionArray[GSpace.GCode++] = std::bind(LAction , &GSpace);
+            FReactionCodeToActionArray[FCode++] = std::bind(LAction , this);
         }
-        GSpace.GWidth = 40;
-        GSpace.GHeight = 60;
-        for(GSpace.GCode = 0 ; auto const& LEntry : std::filesystem::recursive_directory_iterator{"Images/Terrains"})
+        FWidth = 40;
+        FHeight = 60;
+        for(FCode = 0 ; auto const& LEntry : std::filesystem::recursive_directory_iterator{"Images/Terrains"})
         {
             if(LEntry.path().extension() == ".png")
             {
-                GSpace.GTerrainNameToCodeArray[LEntry.path().generic_string().substr(LEntry.path().generic_string().find('/' , LEntry.path().generic_string().find('/') + 1))] = GSpace.GCode++;
+                FTerrainNameToCodeArray[LEntry.path().generic_string().substr(LEntry.path().generic_string().find('/' , LEntry.path().generic_string().find('/') + 1))] = FCode++;
             }
         }
         NTerrain::IInitialize();
-        GSpace.GTerrainCodeArray.resize(GSpace.GWidth * GSpace.GHeight);
+        FTerrainCodeArray.resize(FWidth * FHeight);
+        FFile.open("Terrains/Antifreeze.txt" , std::ios::in);
+        for(auto & LTerrain : FTerrainCodeArray)
         {
-            GSpace.GFile.open("Terrains/Antifreeze.txt" , std::ios::in);
-            for(auto & LTerrain : GSpace.GTerrainCodeArray)
-            {
-                GSpace.GFile >> NTerrain::GName;
-                NTerrain::IConstruct();
-                LTerrain = NTerrain::GTerrain;
-            }
+            FFile >> NTerrain::GName;
+            NTerrain::IConstruct();
+            LTerrain = NTerrain::GTerrain;
         }
-        GSpace.GTerrainArray.resize(GSpace.GWidth * GSpace.GHeight);
-        for(GSpace.GCode = 0 ; auto const& LEntry : std::filesystem::recursive_directory_iterator{"Images/Entities"})
+        FFile.close();
+        FTerrainArray.resize(FWidth * FHeight);
+        for(FCode = 0 ; auto const& LEntry : std::filesystem::recursive_directory_iterator{"Images/Entities"})
         {
             if(LEntry.path().extension() == ".png")
             {
-                GSpace.GEntityNameToCodeArray[LEntry.path().generic_string().substr(LEntry.path().generic_string().find('/' , LEntry.path().generic_string().find('/') + 1))] = GSpace.GCode++;
+                FEntityNameToCodeArray[LEntry.path().generic_string().substr(LEntry.path().generic_string().find('/' , LEntry.path().generic_string().find('/') + 1))] = FCode++;
             }
         }
         NEntity::IInitialize();
-        GSpace.GEntityCodeArray.resize(GSpace.GWidth * GSpace.GHeight);
-        GSpace.GEntityArray.resize(GSpace.GWidth * GSpace.GHeight);
+        FEntityCodeArray.resize(FWidth * FHeight);
+        FEntityArray.resize(FWidth * FHeight);
         NEntity::GName = "/_.png";
-        for(auto & LEntity : GSpace.GEntityCodeArray)
+        for(auto & LEntity : FEntityCodeArray)
         {
             NEntity::IConstruct();
             LEntity = NEntity::GEntity;
@@ -94,90 +93,90 @@ namespace NOppression::NServer::NSpace
     void SSpace::IUpdate()
     {
         IReact();
-        for(auto const& LOrder : GSpace.GOrderCodeArray)
+        for(auto const& LOrder : FOrderCodeArray)
         {
             NOrder::GOrder = LOrder;
             NOrder::IUpdate();
         }
         do
         {
-            GSpace.GIsRemoved = false;
-            for(auto LOrder{GSpace.GOrderCodeArray.begin()} ; LOrder != GSpace.GOrderCodeArray.end() ; LOrder++)
+            FIsRemoved = false;
+            for(auto LOrder{FOrderCodeArray.begin()} ; LOrder != FOrderCodeArray.end() ; LOrder++)
             {
                 NOrder::GOrder = *LOrder;
                 NOrder::IIsCompleted();
                 if(NOrder::GIsCompleted)
                 {
-                    GSpace.GOrderCodeArray.erase(LOrder);
-                    GSpace.GIsRemoved = true;
+                    FOrderCodeArray.erase(LOrder);
+                    FIsRemoved = true;
                     break;
                 }
             }
         }
-        while(GSpace.GIsRemoved);
+        while(FIsRemoved);
     }
 
     void SSpace::ISignalize()
     {
-        GSpace.GByteArray.resize(sizeof(decltype(GSpace.GSignalNameToCodeArray)::mapped_type) + GSpace.GSize);
-        std::memcpy(&GSpace.GByteArray[0] , &GSpace.GSignalNameToCodeArray[GSpace.GName] , sizeof(decltype(GSpace.GSignalNameToCodeArray)::mapped_type));
-        if(GSpace.GData && GSpace.GSize)
+        FByteArray.resize(sizeof(decltype(FSignal)) + FSize);
+        std::memcpy(&FByteArray[0] , &FSignal , sizeof(decltype(FSignal)));
+        if(FData && FSize)
         {
-            std::memcpy(&GSpace.GByteArray[sizeof(decltype(GSpace.GSignalNameToCodeArray)::mapped_type)] , GSpace.GData , GSpace.GSize);
+            std::memcpy(&FByteArray[sizeof(decltype(FSignal))] , FData , FSize);
         }
-        NNetwork::GData = GSpace.GByteArray.data();
-        NNetwork::GSize = std::ssize(GSpace.GByteArray);
+        NNetwork::GData = FByteArray.data();
+        NNetwork::GSize = std::ssize(FByteArray);
         NNetwork::ISend();
     }
 
     void SSpace::ISignalizeDimensionality()
     {
-        NDimensionality::GX = GSpace.GWidth;
-        NDimensionality::GY = GSpace.GHeight;
+        NDimensionality::GX = FWidth;
+        NDimensionality::GY = FHeight;
         NDimensionality::IConstruct();
-        GSpace.GName = "Dimensionality";
-        GSpace.GData = NDimensionality::GDimensionalityArray[NDimensionality::GDimensionality];
-        GSpace.GSize = sizeof(std::remove_pointer_t<decltype(NDimensionality::GDimensionalityArray)::mapped_type>);
+        FSignal = FSignalType.FDimensionality;
+        FData = NDimensionality::GDimensionalityArray[NDimensionality::GDimensionality];
+        FSize = sizeof(std::remove_pointer_t<decltype(NDimensionality::GDimensionalityArray)::mapped_type>);
         ISignalize();
         NDimensionality::IDeconstruct();
     }
 
     void SSpace::ISignalizeTerrainArray()
     {
-        for(std::int64_t LTerrainArrayIndex{0} ; auto & LTerrain : GSpace.GTerrainArray)
+        for(std::int64_t LTerrainArrayIndex{0} ; auto & LTerrain : FTerrainArray)
         {
-            LTerrain = *NTerrain::GTerrainArray[GSpace.GTerrainCodeArray[LTerrainArrayIndex++]];
+            LTerrain = *NTerrain::GTerrainArray[FTerrainCodeArray[LTerrainArrayIndex++]];
         }
-        GSpace.GName = "TerrainArray";
-        GSpace.GData = GSpace.GTerrainArray.data();
-        GSpace.GSize = GSpace.GWidth * GSpace.GHeight * sizeof(decltype(GSpace.GTerrainArray)::value_type);
+        FSignal = FSignalType.FTerrainArray;
+        FData = FTerrainArray.data();
+        FSize = FWidth * FHeight * sizeof(decltype(FTerrainArray)::value_type);
         ISignalize();
     }
 
     void SSpace::ISignalizeEntityArray()
     {
-        for(std::int64_t LEntityArrayIndex{0} ; auto & LEntity : GSpace.GEntityArray)
+        for(std::int64_t LEntityArrayIndex{0} ; auto & LEntity : FEntityArray)
         {
-            LEntity = *NEntity::GEntityArray[GSpace.GEntityCodeArray[LEntityArrayIndex++]];
+            LEntity = *NEntity::GEntityArray[FEntityCodeArray[LEntityArrayIndex++]];
         }
-        GSpace.GName = "EntityArray";
-        GSpace.GData = GSpace.GEntityArray.data();
-        GSpace.GSize = GSpace.GWidth * GSpace.GHeight * sizeof(decltype(GSpace.GEntityArray)::value_type);
+        FSignal = FSignalType.FEntityArray;
+        FData = FEntityArray.data();
+        FSize = FWidth * FHeight * sizeof(decltype(FEntityArray)::value_type);
         ISignalize();
     }
 
     void SSpace::ISignalizeSelection()
     {
-        GSpace.GName = "Selection";
-        GSpace.GData = NSelection::GSelectionArray[GSpace.GSelection];
-        GSpace.GSize = sizeof(std::remove_pointer_t<decltype(NSelection::GSelectionArray)::mapped_type>);
+        FSignal = FSignalType.FSelection;
+        FData = NSelection::GSelectionArray[FSelection];
+        FSize = sizeof(std::remove_pointer_t<decltype(NSelection::GSelectionArray)::mapped_type>);
         ISignalize();
     }
 
     void SSpace::IReact()
     {
         NNetwork::IReceiveIntegral();
-        GSpace.GReactionCodeToActionArray[NNetwork::GIntegral]();
+        FReactionCodeToActionArray[NNetwork::GIntegral]();
     }
 
     void SSpace::IReactDimensionality()
@@ -206,9 +205,9 @@ namespace NOppression::NServer::NSpace
         }
         LOrder;
         NNetwork::GData = &LOrder;
-        NNetwork::GSize = sizeof(LOrder);
+        NNetwork::GSize = sizeof(decltype(LOrder));
         NNetwork::IReceive();
-        NEntity::GEntity = GSpace.GEntityCodeArray[LOrder.FFromY * GSpace.GWidth + LOrder.FFromX];
+        NEntity::GEntity = FEntityCodeArray[LOrder.FFromY * FWidth + LOrder.FFromX];
         NEntity::IName();
         if(NEntity::GName != "/_.png")
         {
@@ -218,7 +217,7 @@ namespace NOppression::NServer::NSpace
             NOrder::GToY = LOrder.FToY;
             NOrder::GDuration = 1'000.0;
             NOrder::IConstruct();
-            GSpace.GOrderCodeArray.emplace_back(NOrder::GOrder);
+            FOrderCodeArray.emplace_back(NOrder::GOrder);
         }
     }
 
@@ -232,35 +231,35 @@ namespace NOppression::NServer::NSpace
         }
         LEntity;
         NNetwork::GData = &LEntity;
-        NNetwork::GSize = sizeof(LEntity);
+        NNetwork::GSize = sizeof(decltype(LEntity));
         NNetwork::IReceive();
-        NEntity::GEntityArray[GSpace.GEntityCodeArray[LEntity.FY * GSpace.GWidth + LEntity.FX]]->FCode = LEntity.FCode; 
+        NEntity::GEntityArray[FEntityCodeArray[LEntity.FY * FWidth + LEntity.FX]]->FCode = LEntity.FCode; 
     }
 
     void SSpace::IDeinitialize()
     {
-        for(auto const& LOrder : GSpace.GOrderCodeArray)
+        for(auto const& LOrder : FOrderCodeArray)
         {
             NOrder::GOrder = LOrder;
             NOrder::IDeconstruct();
         }
-        GSpace.GOrderCodeArray.clear();
+        FOrderCodeArray.clear();
         NOrder::IDeinitialize();
         NSelection::IDeinitialize();
         NDimensionality::IDeinitialize();
-        for(auto const& LEntity : GSpace.GEntityCodeArray)
+        for(auto const& LEntity : FEntityCodeArray)
         {
             NEntity::GEntity = LEntity;
             NEntity::IDeconstruct();
         }
-        GSpace.GEntityCodeArray.clear();
+        FEntityCodeArray.clear();
         NEntity::IDeinitialize();
-        for(auto const& LTerrain : GSpace.GTerrainCodeArray)
+        for(auto const& LTerrain : FTerrainCodeArray)
         {
             NTerrain::GTerrain = LTerrain;
             NTerrain::IDeconstruct();
         }
-        GSpace.GTerrainCodeArray.clear();
+        FTerrainCodeArray.clear();
         NTerrain::IDeinitialize();
     }
 }
