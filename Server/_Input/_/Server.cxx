@@ -7,6 +7,8 @@
 #include"Server/Debug.hxx"
 #include"Server/Network.hxx"
 #include"Server/Space.hxx"
+#include"Server/Space/Entity.hxx"
+#include"Server/Space/Terrain.hxx"
 #include"Server/Time.hxx"
 
 /*
@@ -38,17 +40,84 @@
     Terrain > Space
 */
 
+/*
+                       Network
+                       ^
+    Time -> Network -> Space
+    ^
+    Server
+    ^
+    main
+*/
+
+/*           
+    Network  Time Network Network
+    ^        ^    ^       ^
+    Input -> Intermediate Output
+    ^
+    Server
+    ^
+    main
+*/
+
+/*           
+             Network
+             ^
+    Network  Time            Network
+    ^        ^               ^
+    Input -> Intermediate -> Output
+    ^
+    Server
+    ^
+    main
+*/
+
+/*
+    Time Network
+    ^    ^
+    Server
+    ^
+    main
+*/
+
+/*
+    Time -> Network
+    ^
+    Server
+    ^
+    main
+*/
+
+/*
+                   Button        Button
+                   ^             ^
+                   |             |
+             Mouse Video   Mouse Video   Keyboard Mouse Audio Video
+             ^     ^       ^     ^       ^        ^     ^     ^
+             |     |       |     |       |        |     |     |
+    Linker   Launcher      Server-       Client----------------
+    ^        ^             ^             ^
+    |        |             *             *
+    Oppression----------------------------
+    ^
+    |
+    main
+*/
+
 namespace NOppression::NServer
 {
-    void IInitialize()
+    SServer * GServer;
+    
+    SServer::SServer()
     {
         NDebug::ICode(SDL_Init(SDL_INIT_EVERYTHING));
         NTime::IInitialize();
         NNetwork::IInitialize();
-        NSpace::GSpace.IInitialize();
+        GSpace = new(NSpace::SSpace);
+        GSpace->IInitialize();
     }
     
-    void IUpdate()
+    void SServer::IUpdate()
     {
         while(true)
         {
@@ -58,13 +127,14 @@ namespace NOppression::NServer
             {
                 break;
             }
-            NSpace::GSpace.IUpdate();
+            GSpace->IUpdate();
         }
     }
 
-    void IDeinitialize()
+    SServer::~SServer()
     {
-        NSpace::GSpace.IDeinitialize();
+        GSpace->IDeinitialize();
+        delete(GSpace);
         NNetwork::IDeinitialize();
         NTime::IDeinitialize();
         SDL_Quit();
@@ -73,8 +143,8 @@ namespace NOppression::NServer
 
 std::int32_t main(std::int32_t , char **)
 {
-    NOppression::NServer::IInitialize();
-    NOppression::NServer::IUpdate();
-    NOppression::NServer::IDeinitialize();
+    NOppression::NServer::GServer = new(NOppression::NServer::SServer);
+    NOppression::NServer::GServer->IUpdate();
+    delete(NOppression::NServer::GServer);
     return(0);
 }

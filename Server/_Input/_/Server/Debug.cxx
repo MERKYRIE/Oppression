@@ -3,69 +3,9 @@
 
 namespace NOppression::NServer::NDebug
 {
-    SDebug GDebug;
-    
-    std::unordered_map<std::string , std::int64_t> GIntegralArray;
-    std::unordered_map<std::string , double> GRealArray;
-    std::unordered_map<std::string , std::function<void()>> GFunctionArray;
-    std::string GCommand;
-    std::string GLexem;
-    std::string GVariable;
-    std::string GValue;
-    std::string GType;
 
-    void SDebug::ITest()
-    {
-        GIntegralArray["Test"] = 0;
-        GRealArray["Check"] = 0.0;
-        GFunctionArray["Experiment"] = []{std::cout << "Experiment" << "\n";};
-        GCommand = "Test=5\nCheck=3.14\nExperiment()\n";
-        GType = "Integral";
-        for(char const& LCharacter : GCommand)
-        {
-            switch(LCharacter)
-            {
-                case('('):
-                    GType = "Function";
-                break;
-                case(')'):
-                    GType = "Function";
-                break;
-                case('='):
-                    GVariable = GLexem;
-                    GLexem.clear();
-                break;
-                case('.'):
-                    GType = "Real";
-                    GLexem += LCharacter;
-                break;
-                case('\n'):
-                    GValue = GLexem;
-                    GLexem.clear();
-                    if(GType == "Integral")
-                    {
-                        GIntegralArray[GVariable] = std::stoll(GValue);
-                    }
-                    else if(GType == "Real")
-                    {
-                        GRealArray[GVariable] = std::stod(GValue);
-                    }
-                    else
-                    {
-                        GFunctionArray[GValue]();
-                    }
-                break;
-                default:
-                    GLexem += LCharacter;
-                break;
-            }
-        }
-    }
-    
     void IAssert(bool const& ACondition , std::string const& AMessage , std::source_location const& ALocation)
     {
-        GDebug.ITest();
-        
         if(ACondition)
         {
             if

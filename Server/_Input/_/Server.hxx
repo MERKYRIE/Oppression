@@ -32,10 +32,6 @@ namespace NOppression
 {
     namespace NServer
     {
-        void IInitialize();
-        void IUpdate();
-        void IDeinitialize();
-        
         namespace NDebug
         {
         
@@ -83,5 +79,15 @@ namespace NOppression
         {
         
         }
+
+        struct SServer
+        {
+            NSpace::SSpace * GSpace;
+
+            SServer();
+            void IUpdate();
+            ~SServer();
+        }
+        extern * GServer;
     }
 }

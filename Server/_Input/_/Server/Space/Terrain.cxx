@@ -16,12 +16,12 @@ namespace NOppression::NServer::NSpace::NTerrain
     {
         GTerrain = std::ranges::max_element(GTerrainArray)->first + 1;
         GTerrainArray[GTerrain] = new STerrain;
-        GTerrainArray[GTerrain]->FCode = GSpace.FTerrainNameToCodeArray[GName];
+        GTerrainArray[GTerrain]->FCode = GServer->GSpace->FTerrainNameToCodeArray[GName];
     }
 
     void IName()
     {
-        GName = std::ranges::find_if(GSpace.FTerrainNameToCodeArray , [&](auto const& ATerrain){return(GTerrainArray[GTerrain]->FCode == ATerrain.second);})->first;
+        GName = std::ranges::find_if(GServer->GSpace->FTerrainNameToCodeArray , [&](auto const& ATerrain){return(GTerrainArray[GTerrain]->FCode == ATerrain.second);})->first;
     }
 
     void IDeconstruct()

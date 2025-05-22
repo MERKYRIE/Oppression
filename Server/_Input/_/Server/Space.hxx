@@ -46,6 +46,5 @@ namespace NOppression::NServer::NSpace
         void IReactOrder();
         void IReactEntity();
         void IDeinitialize();
-    }
-    extern GSpace;
+    };
 }

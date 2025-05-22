@@ -11,8 +11,6 @@
 
 namespace NOppression::NServer::NSpace
 {
-    SSpace GSpace;
-
     void SSpace::IInitialize()
     {
         for
