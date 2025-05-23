@@ -12,96 +12,80 @@
 #include"Server/Time.hxx"
 
 /*
-    Server > Debug
-           > Network
-           > Space
-           > Time
-
-    Network > Debug
-            > Client
-
-    Space > Network
-          > Dimensionality
-          > Entity
-          > Order
-          > Selection
-          > Terrain
-
-    Client > Debug
-           > Network
-
-    Entity > Space
-
-    Order > Space
-          > Time
-          > Entity
-          > Selection
-
-    Terrain > Space
-*/
-
-/*
-                       Network
-                       ^
-    Time -> Network -> Space
-    ^
-    Server
-    ^
-    main
-*/
-
-/*           
-    Network  Time Network Network
-    ^        ^    ^       ^
-    Input -> Intermediate Output
-    ^
-    Server
-    ^
-    main
-*/
-
-/*           
-             Network
-             ^
-    Network  Time            Network
-    ^        ^               ^
-    Input -> Intermediate -> Output
-    ^
-    Server
-    ^
-    main
-*/
-
-/*
-    Time Network
-    ^    ^
-    Server
-    ^
-    main
-*/
-
-/*
-    Time -> Network
-    ^
-    Server
-    ^
-    main
-*/
-
-/*
-                   Button        Button
-                   ^             ^
-                   |             |
-             Mouse Video   Mouse Video   Keyboard Mouse Audio Video
-             ^     ^       ^     ^       ^        ^     ^     ^
-             |     |       |     |       |        |     |     |
-    Linker   Launcher      Server-       Client----------------
-    ^        ^             ^             ^
-    |        |             *             *
-    Oppression----------------------------
+                                                                                                       Keyboard Mouse Audio Video   Keyboard Mouse Audio Video                                                              
+                                                                                              ^        ^        ^     ^     ^       ^        ^     ^     ^                                                              
+                                                                                              |        |        |     |     |       |        |     |     |                                                              
+                                               Button            Keyboard Mouse Audio Video   Linker   Pause-----------------       Gamefeel--------------
+                                               ^        ^        ^        ^     ^     ^       ^        ^                            ^
+                                               |        |        |        |     |     |       |        |                            |
+                   Button              Mouse   Video    Linker   Main------------------       Gameplay-------------------------------
+                   ^          ^        ^       ^        ^        ^                            ^
+                   |          |        |       |        |        *                            *
+             Mouse Video      Linker   Server---        Client---------------------------------
+    ^        ^     ^          ^        ^                ^
+    |        |     |          |        *                *
+    Linker   Launcher         Game-----------------------
+    ^              ^          ^
+    |              X          |
+    Oppression-----------------
     ^
     |
     main
+
+       State    < Key    < Keyboard < Input
+    -> State    < Button < Mouse <----
+    |  Position < Cursor < Mouse     |
+    -> State    < Wheel  < Mouse     |
+                           Shortcut <-
+
+    std::int32_t main(std::int32_t , char **)
+    {
+        NOppression::GOppression = new(NOppression::SOppression);
+        delete(NOppression::GOppression);
+    }
+
+    SOppression::SOppression()
+    {
+        std::string LState;
+        FLauncher = new(NLauncher::SLauncher{LState});
+        delete(FLauncher);
+        FLinker = new(NLinker::SLinker);
+        if(LState == "Server")
+        {
+
+        }
+        if(LState == "Client")
+        {
+
+        }
+        delete(FLinker);
+    }
+
+    SLauncher::SLauncher(std::string & AState)
+    {
+        new(NMouse::SMouse{FMouse});
+        new(NVideo::SVideo{FVideo});
+        while(true)
+        {
+            FMouse->IUpdate();
+            FVideo->IUpdate();
+            FX = FMouse->FX / FVideo->FHeight;
+            FY = FMouse->FY / FVideo->FHeight;
+            if(FMouse->FButton)
+            {
+                for(auto & LButton : FVideo->FButtonArray)
+                {
+                    if(LButton->FX1 <= FX && FX <= LButton->FX2 && LButton->FY1 <= FY && FY <= LButton->FY2)
+                    {
+                        AState = LButton->FName;
+                        delete(FVideo);
+                        delete(FMouse);
+                        return;
+                    }
+                }
+            }
+        }
+    }
 */
 
 namespace NOppression::NServer
