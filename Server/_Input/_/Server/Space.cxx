@@ -213,7 +213,14 @@ namespace NOppression::NServer::NSpace
             NOrder::GFromY = LOrder.FFromY;
             NOrder::GToX = LOrder.FToX;
             NOrder::GToY = LOrder.FToY;
-            NOrder::GDuration = 1'000.0;
+            if(NEntity::GName == "/Builder/+0.png")
+            {
+                NOrder::GDuration = 450.0;
+            }
+            else
+            {
+                NOrder::GDuration = 225.0;
+            }
             NOrder::IConstruct();
             FOrderCodeArray.emplace_back(NOrder::GOrder);
         }

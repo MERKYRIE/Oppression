@@ -84,9 +84,9 @@ namespace NOppression
         {
             NSpace::SSpace * GSpace;
 
-            SServer();
+            void IInitialize();
             void IUpdate();
-            ~SServer();
+            void IDeinitialize();
         }
         extern * GServer;
     }

@@ -92,7 +92,7 @@ namespace NOppression::NServer
 {
     SServer * GServer;
     
-    SServer::SServer()
+    void SServer::IInitialize()
     {
         NDebug::ICode(SDL_Init(SDL_INIT_EVERYTHING));
         NTime::IInitialize();
@@ -115,7 +115,7 @@ namespace NOppression::NServer
         }
     }
 
-    SServer::~SServer()
+    void SServer::IDeinitialize()
     {
         GSpace->IDeinitialize();
         delete(GSpace);
@@ -128,7 +128,9 @@ namespace NOppression::NServer
 std::int32_t main(std::int32_t , char **)
 {
     NOppression::NServer::GServer = new(NOppression::NServer::SServer);
+    NOppression::NServer::GServer->IInitialize();
     NOppression::NServer::GServer->IUpdate();
+    NOppression::NServer::GServer->IDeinitialize();
     delete(NOppression::NServer::GServer);
     return(0);
 }
